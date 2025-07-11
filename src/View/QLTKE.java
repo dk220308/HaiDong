@@ -439,7 +439,6 @@ public class QLTKE extends javax.swing.JPanel {
             }
         });
 
-        BT_timkh.setIcon(new javax.swing.ImageIcon("D:\\MOB1014\\icons\\search.png")); // NOI18N
         BT_timkh.setText("Tìm");
         BT_timkh.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -498,6 +497,11 @@ public class QLTKE extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        jTable2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable2MouseClicked(evt);
+            }
+        });
         jScrollPane2.setViewportView(jTable2);
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
@@ -546,7 +550,6 @@ public class QLTKE extends javax.swing.JPanel {
 
         jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Năm 2022", "Năm 2023", "Năm 2024", "Năm 2025" }));
 
-        BT_timkh1.setIcon(new javax.swing.ImageIcon("D:\\MOB1014\\icons\\search.png")); // NOI18N
         BT_timkh1.setText("Tìm");
         BT_timkh1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -744,6 +747,11 @@ public class QLTKE extends javax.swing.JPanel {
             e.printStackTrace();
         }
     }//GEN-LAST:event_BT_timkh1ActionPerformed
+
+    private void jTable2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable2MouseClicked
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_jTable2MouseClicked
 
     
     

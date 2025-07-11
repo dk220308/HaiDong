@@ -68,7 +68,7 @@ public class ThongKeDAO {
     public List<HoaDon> getDanhSachHoaDonByDateRange(LocalDate startDate, LocalDate endDate) throws SQLException {
         List<HoaDon> hoaDonList = new ArrayList<>();
         // Vì NgayTao trong DB là nvarchar, chúng ta sẽ so sánh chuỗi ngày
-        String sql = "SELECT MaHD, MaNV, TenKH, SDT, TrangThai, NgayTao, TongTien, TienTra, TienThua, ThanhToan, GiaoHang, GhiChu FROM HoaDon WHERE NgayTao BETWEEN ? AND ?";
+       String sql = "SELECT MaHD, MaNV, TenKH, SDT, TrangThai, NgayTao, TongTien, TienTra, TienThua, ThanhToan, GiaoHang, GhiChu FROM HoaDon WHERE CONVERT(DATE, NgayTao) BETWEEN ? AND ?";
         
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -105,13 +105,13 @@ public class ThongKeDAO {
         List<TopSanPham> topSanPhamList = new ArrayList<>();
         // Giả định bạn có bảng HoaDonChiTiet và SanPham
         // Sử dụng TOP 5 cho SQL Server. Nếu dùng MySQL/PostgreSQL, thay bằng LIMIT 5
-        String sql = "SELECT TOP 5 sp.TenSP, SUM(hdct.SoLuong) AS TongSoLuongBan, SUM(hdct.SoLuong * hdct.DonGia) AS TongDoanhThu " + // <-- Đã sửa hdct.DonGia
-                     "FROM HoaDonChiTiet hdct " +
-                     "JOIN SanPham sp ON hdct.MaSP = sp.MaSP " +
-                     "JOIN HoaDon hd ON hdct.MaHD = hd.MaHD " +
-                     "WHERE hd.NgayTao BETWEEN ? AND ? " +
-                     "GROUP BY sp.TenSP " +
-                     "ORDER BY TongDoanhThu DESC";
+        String sql = "SELECT TOP 5 sp.TenSP, SUM(hdct.SoLuong) AS TongSoLuongBan, SUM(hdct.SoLuong * hdct.DonGia) AS TongDoanhThu " +
+             "FROM HoaDonChiTiet hdct " +
+             "JOIN SanPham sp ON hdct.MaSP = sp.MaSP " +
+             "JOIN HoaDon hd ON hdct.MaHD = hd.MaHD " +
+             "WHERE CONVERT(DATE, hd.NgayTao) BETWEEN ? AND ? " + // <-- Sửa ở đây
+             "GROUP BY sp.TenSP " +
+             "ORDER BY TongDoanhThu DESC";
 
         try (Connection conn = DBConnect.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
