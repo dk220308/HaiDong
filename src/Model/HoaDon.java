@@ -1,8 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Model;
+
+// import java.time.LocalDate; // Không cần import này nếu ngayTao là String
 
 /**
  *
@@ -14,10 +12,10 @@ public class HoaDon {
     private String tenkh;
     private String sdt;
     private String trangThai;
-    private String ngayTao;
-    private float tongTien;
-    private float tienTra;
-    private float tienThua;
+    private String ngayTao; // Giữ nguyên là String để khớp với DB nvarchar(20)
+    private double tongTien;
+    private double tienTra;
+    private double tienThua;
     private String thanhToan;
     private String giaoHang;
     private String ghiChu;
@@ -25,7 +23,8 @@ public class HoaDon {
     public HoaDon() {
     }
 
-    public HoaDon(String mahd, String Manv, String tenkh, String sdt, String trangThai, String ngayTao, float tongTien, float tienTra, float tienThua, String thanhToan, String giaoHang, String ghiChu) {
+    // Constructor đã cập nhật để nhận String cho ngayTao
+    public HoaDon(String mahd, String Manv, String tenkh, String sdt, String trangThai, String ngayTao, double tongTien, double tienTra, double tienThua, String thanhToan, String giaoHang, String ghiChu) {
         this.mahd = mahd;
         this.Manv = Manv;
         this.tenkh = tenkh;
@@ -80,35 +79,37 @@ public class HoaDon {
         this.trangThai = trangThai;
     }
 
+    // Getter cho String
     public String getNgayTao() {
         return ngayTao;
     }
 
+    // Setter cho String
     public void setNgayTao(String ngayTao) {
         this.ngayTao = ngayTao;
     }
 
-    public float getTongTien() {
+    public double getTongTien() {
         return tongTien;
     }
 
-    public void setTongTien(float tongTien) {
+    public void setTongTien(double tongTien) {
         this.tongTien = tongTien;
     }
 
-    public float getTienTra() {
+    public double getTienTra() {
         return tienTra;
     }
 
-    public void setTienTra(float tienTra) {
+    public void setTienTra(double tienTra) {
         this.tienTra = tienTra;
     }
 
-    public float getTienThua() {
+    public double getTienThua() {
         return tienThua;
     }
 
-    public void setTienThua(float tienThua) {
+    public void setTienThua(double tienThua) {
         this.tienThua = tienThua;
     }
 
@@ -135,6 +136,4 @@ public class HoaDon {
     public void setGhiChu(String ghiChu) {
         this.ghiChu = ghiChu;
     }
-
-  
 }

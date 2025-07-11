@@ -437,9 +437,6 @@
             </Component>
             <Component class="javax.swing.JButton" name="BT_timkh">
               <Properties>
-                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="2" name="D:\MOB1014\icons\search.png"/>
-                </Property>
                 <Property name="text" type="java.lang.String" value="T&#xec;m"/>
               </Properties>
               <Events>
@@ -666,9 +663,6 @@
             </Component>
             <Component class="javax.swing.JButton" name="BT_timkh1">
               <Properties>
-                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="2" name="D:\MOB1014\icons\search.png"/>
-                </Property>
                 <Property name="text" type="java.lang.String" value="T&#xec;m"/>
               </Properties>
               <Events>

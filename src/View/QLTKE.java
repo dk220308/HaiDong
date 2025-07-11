@@ -4,17 +4,228 @@
  */
 package View;
 
+import DAO.ThongKeDAO;
+import Model.HoaDon;
+import Model.TopSanPham;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.JFrame;
 /**
  *
  * @author XPS
  */
 public class QLTKE extends javax.swing.JPanel {
 
+    private ThongKeDAO thongKeDAO;
+    private DefaultTableModel hoaDonTableModel;
+    private DefaultTableModel topSanPhamTableModel;
+
+    // Định dạng ngày tháng mà bạn mong muốn nhập/hiển thị trên giao diện (ví dụ: "yyyy-MM-dd")
+    private static final DateTimeFormatter UI_DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
     /**
      * Creates new form QLTKE
      */
     public QLTKE() {
-        initComponents();
+        initComponents(); // Phương thức khởi tạo GUI tự động bởi NetBeans
+        thongKeDAO = new ThongKeDAO();
+        setupTables();
+        initData(); // Tải dữ liệu ban đầu khi panel được khởi tạo
+
+        // Thêm ChangeListener cho jTabbedPane2 để tải lại dữ liệu khi chuyển tab
+        jTabbedPane2.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                loadDataForSelectedTab();
+            }
+        });
+    }
+
+    private void initData() {
+        try {
+            // Cập nhật tổng doanh thu
+            double tongDoanhThu = thongKeDAO.getTongDoanhThu();
+            jLabel3.setText(String.format("%,.0f VNĐ", tongDoanhThu));
+
+            // Cập nhật tổng đơn hàng
+            int tongDonHang = thongKeDAO.getTongDonHang();
+            jLabel5.setText(String.valueOf(tongDonHang));
+
+            // Cập nhật tổng tồn kho
+            int tongTonKho = thongKeDAO.getTongSoLuongTonKho();
+            jLabel7.setText(String.valueOf(tongTonKho));
+
+            // Tải dữ liệu mặc định cho các bảng (ví dụ: hóa đơn và top sản phẩm của tháng hiện tại)
+            LocalDate today = LocalDate.now();
+            LocalDate firstDayOfMonth = today.withDayOfMonth(1);
+            LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
+
+            // Đặt giá trị mặc định cho TF_MaKH1 và TF_MaKH3 (ngày đầu và cuối tháng hiện tại)
+            TF_MaKH1.setText(firstDayOfMonth.format(UI_DATE_FORMATTER));
+            TF_MaKH3.setText(lastDayOfMonth.format(UI_DATE_FORMATTER));
+
+            // Tải dữ liệu cho tab đang được chọn (mặc định là "Danh sách hoá đơn")
+            loadDataForSelectedTab();
+
+            // Đặt giá trị mặc định cho ComboBox tháng/năm hiện tại
+            jComboBox1.setSelectedIndex(today.getMonthValue() - 1); // Tháng 1 = index 0
+            // Tìm và chọn năm hiện tại trong jComboBox2 (nếu có)
+            for (int i = 0; i < jComboBox2.getItemCount(); i++) {
+                String yearItem = jComboBox2.getItemAt(i);
+                if (yearItem.contains(String.valueOf(today.getYear()))) {
+                    jComboBox2.setSelectedIndex(i);
+                    break;
+                }
+            }
+
+        } catch (SQLException e) { // Bắt lỗi SQLException từ DAO
+            JOptionPane.showMessageDialog(this, "Lỗi cơ sở dữ liệu khi tải dữ liệu ban đầu: " + e.getMessage(), "Lỗi DB", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Lỗi khi tải dữ liệu ban đầu: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+
+    private void setupTables() {
+        // Cấu hình jTable2 (Danh sách hóa đơn)
+        hoaDonTableModel = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Không cho phép chỉnh sửa trực tiếp trên bảng
+            }
+        };
+        hoaDonTableModel.addColumn("Mã HĐ");
+        hoaDonTableModel.addColumn("Mã NV");
+        hoaDonTableModel.addColumn("Tên KH");
+        hoaDonTableModel.addColumn("SĐT");
+        hoaDonTableModel.addColumn("Trạng thái");
+        hoaDonTableModel.addColumn("Ngày tạo"); // Cột này sẽ hiển thị LocalDate
+        hoaDonTableModel.addColumn("Tổng tiền");
+        hoaDonTableModel.addColumn("Tiền trả");
+        hoaDonTableModel.addColumn("Tiền thừa");
+        hoaDonTableModel.addColumn("Thanh toán");
+        hoaDonTableModel.addColumn("Giao hàng");
+        hoaDonTableModel.addColumn("Ghi chú");
+        jTable2.setModel(hoaDonTableModel);
+
+        // Cấu hình jTable1 (Top 5 sản phẩm)
+        topSanPhamTableModel = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Không cho phép chỉnh sửa trực tiếp trên bảng
+            }
+        };
+        topSanPhamTableModel.addColumn("Tên SP");
+        topSanPhamTableModel.addColumn("Số lượng bán");
+        topSanPhamTableModel.addColumn("Tổng doanh thu");
+        jTable1.setModel(topSanPhamTableModel);
+    }
+
+    private void fillHoaDonTable(List<HoaDon> list) {
+        hoaDonTableModel.setRowCount(0); // Xóa dữ liệu cũ
+        if (list == null || list.isEmpty()) {
+            // JOptionPane.showMessageDialog(this, "Không tìm thấy hóa đơn nào trong khoảng thời gian này.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        for (HoaDon hd : list) {
+            hoaDonTableModel.addRow(new Object[]{
+                hd.getMahd(),
+                hd.getManv(),
+                hd.getTenkh(),
+                hd.getSdt(),
+                hd.getTrangThai(),
+                hd.getNgayTao(),
+                hd.getTongTien(),
+                hd.getTienTra(),
+                hd.getTienThua(),
+                hd.getThanhToan(),
+                hd.getGiaoHang(),
+                hd.getGhiChu()
+            });
+        }
+    }
+
+    private void fillTopSanPhamTable(List<TopSanPham> list) {
+        topSanPhamTableModel.setRowCount(0); // Xóa dữ liệu cũ
+        if (list == null || list.isEmpty()) {
+            // JOptionPane.showMessageDialog(this, "Không tìm thấy sản phẩm bán chạy nào trong khoảng thời gian này.", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        for (TopSanPham tsp : list) {
+            topSanPhamTableModel.addRow(new Object[]{
+                tsp.getTenSanPham(),
+                tsp.getTongSoLuongBan(),
+                String.format("%,.0f VNĐ", tsp.getTongDoanhThu()) // Định dạng tiền tệ
+            });
+        }
+    }
+
+    private void loadDataForSelectedTab() {
+        int selectedTabIndex = jTabbedPane2.getSelectedIndex();
+        try {
+            if (selectedTabIndex == 0) { // Tab "Danh sách hoá đơn"
+                String ngayBatDauStr = TF_MaKH1.getText();
+                String ngayKetThucStr = TF_MaKH3.getText();
+
+                if (ngayBatDauStr.isEmpty() || ngayKetThucStr.isEmpty()) {
+                    fillHoaDonTable(new ArrayList<>()); // Xóa bảng nếu thiếu ngày
+                    // Không hiển thị JOptionPane ở đây để tránh popup khi khởi tạo hoặc chuyển tab rỗng
+                    return;
+                }
+
+                LocalDate startDate = LocalDate.parse(ngayBatDauStr, UI_DATE_FORMATTER);
+                LocalDate endDate = LocalDate.parse(ngayKetThucStr, UI_DATE_FORMATTER);
+
+                if (startDate.isAfter(endDate)) {
+                    fillHoaDonTable(new ArrayList<>()); // Xóa bảng nếu ngày không hợp lệ
+                    JOptionPane.showMessageDialog(this, "Ngày bắt đầu không được sau ngày kết thúc.", "Lỗi", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                List<HoaDon> danhSachHoaDon = thongKeDAO.getDanhSachHoaDonByDateRange(startDate, endDate);
+                fillHoaDonTable(danhSachHoaDon);
+
+            } else if (selectedTabIndex == 1) { // Tab "Top 5 sản phẩm"
+                int selectedMonthIndex = jComboBox1.getSelectedIndex();
+                int selectedYearIndex = jComboBox2.getSelectedIndex();
+
+                if (selectedMonthIndex == -1 || selectedYearIndex == -1) {
+                    fillTopSanPhamTable(new ArrayList<>()); // Xóa bảng nếu thiếu lựa chọn
+                    // Không hiển thị JOptionPane ở đây để tránh popup khi khởi tạo hoặc chuyển tab rỗng
+                    return;
+                }
+
+                int month = selectedMonthIndex + 1;
+                String yearItem = (String) jComboBox2.getSelectedItem();
+                int year = Integer.parseInt(yearItem.replace("Năm ", ""));
+
+                LocalDate startDate = LocalDate.of(year, month, 1);
+                LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+
+                List<TopSanPham> topSanPhamList = thongKeDAO.getTop5SanPhamByDateRange(startDate, endDate);
+                fillTopSanPhamTable(topSanPhamList);
+            }
+        } catch (DateTimeParseException e) {
+            JOptionPane.showMessageDialog(this, "Ngày không đúng định dạng. Vui lòng nhập theo định dạng YYYY-MM-DD.", "Lỗi định dạng ngày", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Lỗi cơ sở dữ liệu khi tải dữ liệu cho tab: " + e.getMessage(), "Lỗi DB", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        } catch (NumberFormatException e) { // Bắt lỗi khi parse năm từ ComboBox
+            JOptionPane.showMessageDialog(this, "Lỗi định dạng năm. Vui lòng kiểm tra lại ComboBox năm.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Đã xảy ra lỗi khi tải dữ liệu cho tab: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -446,12 +657,45 @@ public class QLTKE extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">
+    
     private void TF_MaKH2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TF_MaKH2ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_TF_MaKH2ActionPerformed
 
     private void BT_timkhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BT_timkhActionPerformed
         // TODO add your handling code here:
+        String ngayBatDauStr = TF_MaKH1.getText();
+        String ngayKetThucStr = TF_MaKH3.getText();
+
+        if (ngayBatDauStr.isEmpty() || ngayKetThucStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ ngày bắt đầu và ngày kết thúc.", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        try {
+            LocalDate startDate = LocalDate.parse(ngayBatDauStr); // Chuyển đổi String sang LocalDate
+            LocalDate endDate = LocalDate.parse(ngayKetThucStr);   // Chuyển đổi String sang LocalDate
+
+            if (startDate.isAfter(endDate)) {
+                JOptionPane.showMessageDialog(this, "Ngày bắt đầu không được sau ngày kết thúc.", "Lỗi", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // Gọi DAO để lấy danh sách hóa đơn theo khoảng thời gian
+            List<HoaDon> danhSachHoaDon = thongKeDAO.getDanhSachHoaDonByDateRange(startDate, endDate);
+            fillHoaDonTable(danhSachHoaDon); // Đổ dữ liệu vào bảng
+
+            // Chuyển sang tab "Danh sách hóa đơn" để hiển thị kết quả
+            jTabbedPane2.setSelectedIndex(0);
+
+        } catch (DateTimeParseException e) {
+            JOptionPane.showMessageDialog(this, "Ngày không đúng định dạng. Vui lòng nhập theo định dạng YYYY-MM-DD.", "Lỗi định dạng ngày", JOptionPane.ERROR_MESSAGE);
+            // e.printStackTrace(); // Bỏ comment này để debug nếu cần
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Đã xảy ra lỗi khi tìm kiếm hóa đơn: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_BT_timkhActionPerformed
 
     private void TF_MaKH3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TF_MaKH3ActionPerformed
@@ -464,7 +708,91 @@ public class QLTKE extends javax.swing.JPanel {
 
     private void BT_timkh1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BT_timkh1ActionPerformed
         // TODO add your handling code here:
+        int selectedMonthIndex = jComboBox1.getSelectedIndex(); // Lấy index của tháng (0-11)
+        int selectedYearIndex = jComboBox2.getSelectedIndex();   // Lấy index của năm
+
+        if (selectedMonthIndex == -1 || selectedYearIndex == -1) {
+            JOptionPane.showMessageDialog(this, "Vui lòng chọn tháng và năm.", "Cảnh báo", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int month = selectedMonthIndex + 1; // Chuyển đổi index (0-11) thành tháng (1-12)
+        String yearItem = (String) jComboBox2.getSelectedItem(); // Lấy chuỗi năm từ ComboBox
+        int year = 0;
+        try {
+            year = Integer.parseInt(yearItem.replace("Năm ", "")); // Parse lấy số năm
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Lỗi định dạng năm trong ComboBox. Vui lòng kiểm tra lại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+            return;
+        }
+
+        // Xác định ngày đầu và ngày cuối của tháng/năm đã chọn
+        LocalDate startDate = LocalDate.of(year, month, 1);
+        LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+
+        try {
+            // Gọi DAO để lấy Top 5 sản phẩm theo khoảng thời gian
+            List<TopSanPham> topSanPhamList = thongKeDAO.getTop5SanPhamByDateRange(startDate, endDate);
+            fillTopSanPhamTable(topSanPhamList); // Đổ dữ liệu vào bảng
+
+            // Chuyển sang tab "Top 5 sản phẩm" để hiển thị kết quả
+            jTabbedPane2.setSelectedIndex(1);
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Đã xảy ra lỗi khi lấy Top 5 sản phẩm: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_BT_timkh1ActionPerformed
+
+    
+    
+     public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(QLTKE.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(QLTKE.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(QLTKE.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(QLTKE.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                // Tạo một JFrame mới
+                JFrame frame = new JFrame("Quản Lý Thống Kê"); // Tiêu đề cửa sổ
+                
+                // Tạo đối tượng QLTKE panel
+                QLTKE qltkePanel = new QLTKE();
+                
+                // Thêm QLTKE panel vào JFrame
+                frame.add(qltkePanel);
+                
+                // Đặt kích thước cho JFrame (hoặc pack() để tự động điều chỉnh theo nội dung)
+                frame.setSize(1400, 800); // Kích thước ví dụ, bạn có thể điều chỉnh
+                
+                // Đặt thao tác mặc định khi đóng cửa sổ
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                
+                // Đặt vị trí cửa sổ ở giữa màn hình
+                frame.setLocationRelativeTo(null);
+                
+                // Hiển thị JFrame
+                frame.setVisible(true);
+            }
+        });
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

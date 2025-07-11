@@ -8,6 +8,6 @@ package DAO;
  *
  * @author XPS
  */
-public class HoaDonDao {
+public class HoaDonDAO {
     
 }
