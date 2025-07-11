@@ -22,6 +22,32 @@ public class ThongKeDAO {
     public ThongKeDAO() {
         // Constructor
     }
+    
+     public List<HoaDon> getAllHoaDon() throws SQLException {
+        List<HoaDon> danhSachHoaDon = new ArrayList<>();
+        // Câu lệnh SQL để lấy tất cả các cột cần thiết từ bảng HoaDon
+        String sql = "SELECT MaHD, MaNV, TenKH, Sdt, TrangThai, NgayTao, TongTien, TienTra, TienThua, ThanhToan, GhiChu FROM HoaDon ORDER BY NgayTao DESC"; // Sắp xếp theo ngày tạo mới nhất
+        try (Connection con = DBConnect.getConnection(); // Sử dụng lớp DBConnect của bạn để lấy kết nối
+             PreparedStatement pst = con.prepareStatement(sql);
+             ResultSet rs = pst.executeQuery()) {
+            while (rs.next()) {
+                HoaDon hd = new HoaDon();
+                hd.setMahd(rs.getString("MaHD"));
+                hd.setManv(rs.getString("MaNV"));
+                hd.setTenkh(rs.getString("TenKH"));
+                hd.setSdt(rs.getString("Sdt"));
+                hd.setTrangThai(rs.getString("TrangThai"));
+                hd.setNgayTao(rs.getString("NgayTao")); // Đảm bảo kiểu dữ liệu khớp với model HoaDon
+                hd.setTongTien(rs.getDouble("TongTien"));
+                hd.setTienTra(rs.getDouble("TienTra"));
+                hd.setTienThua(rs.getDouble("TienThua"));
+                hd.setThanhToan(rs.getString("ThanhToan"));
+                hd.setGhiChu(rs.getString("GhiChu"));
+                danhSachHoaDon.add(hd);
+            }
+        }
+        return danhSachHoaDon;
+    }
 
     // --- Các hàm lấy tổng quan ---
     public double getTongDoanhThu() throws SQLException {
@@ -132,4 +158,6 @@ public class ThongKeDAO {
         }
         return topSanPhamList;
     }
+    
+    
 }

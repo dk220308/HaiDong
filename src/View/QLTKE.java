@@ -18,6 +18,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.JFrame;
+
 /**
  *
  * @author XPS
@@ -39,6 +40,15 @@ public class QLTKE extends javax.swing.JPanel {
         thongKeDAO = new ThongKeDAO();
         setupTables();
         initData(); // Tải dữ liệu ban đầu khi panel được khởi tạo
+        
+        
+         try {
+            fillHoaDonTable(thongKeDAO.getAllHoaDon());
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Lỗi khi tải tất cả hóa đơn ban đầu: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+
 
         // Thêm ChangeListener cho jTabbedPane2 để tải lại dữ liệu khi chuyển tab
         jTabbedPane2.addChangeListener(new ChangeListener() {
@@ -48,51 +58,44 @@ public class QLTKE extends javax.swing.JPanel {
             }
         });
     }
+    
+    
+    private void updateGeneralStatistics() {
+    try {
+        // Lấy tổng doanh thu
+        double totalRevenue = thongKeDAO.getTongDoanhThu();
+        jLabel_DoanhThu.setText(String.format("%,.0f VNĐ", totalRevenue)); // Giả sử bạn có JLabel tên là jLabel_DoanhThu
+
+        // Lấy tổng số đơn hàng
+        int totalOrders = thongKeDAO.getTongDonHang();
+        jLabel_DonHang.setText(String.valueOf(totalOrders)); // Giả sử bạn có JLabel tên là jLabel_DonHang
+
+        // Lấy tổng số lượng tồn kho
+        int totalStock = thongKeDAO.getTongSoLuongTonKho(); // Đảm bảo đã sửa lỗi tên cột trong phương thức này ở ThongKeDAO
+        jLabel_TonKho.setText(String.valueOf(totalStock)); // Giả sử bạn có JLabel tên là jLabel_TonKho
+
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Lỗi khi cập nhật số liệu thống kê chung: " + e.getMessage(), "Lỗi DB", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+    }
+}
 
     private void initData() {
-        try {
-            // Cập nhật tổng doanh thu
-            double tongDoanhThu = thongKeDAO.getTongDoanhThu();
-            jLabel3.setText(String.format("%,.0f VNĐ", tongDoanhThu));
+        // Thiết lập ngày tháng mặc định cho ô tìm kiếm (ví dụ: ngày đầu và cuối tháng hiện tại)
+        // Bạn có thể để trống nếu muốn người dùng tự nhập, hoặc giữ nguyên để có giá trị gợi ý
+        LocalDate today = LocalDate.now();
+        LocalDate firstDayOfMonth = today.withDayOfMonth(1);
+        LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
 
-            // Cập nhật tổng đơn hàng
-            int tongDonHang = thongKeDAO.getTongDonHang();
-            jLabel5.setText(String.valueOf(tongDonHang));
+        TF_MaKH1.setText(firstDayOfMonth.format(UI_DATE_FORMATTER));
+        TF_MaKH3.setText(lastDayOfMonth.format(UI_DATE_FORMATTER));
 
-            // Cập nhật tổng tồn kho
-            int tongTonKho = thongKeDAO.getTongSoLuongTonKho();
-            jLabel7.setText(String.valueOf(tongTonKho));
+        // Thiết lập tháng và năm mặc định cho JComboBox của tab "Top 5 sản phẩm"
+        jComboBox1.setSelectedIndex(today.getMonthValue() - 1); // Tháng trong LocalDate là 1-12, index là 0-11
+        jComboBox2.setSelectedItem("Năm " + today.getYear()); // Giả sử định dạng là "Năm YYYY"
 
-            // Tải dữ liệu mặc định cho các bảng (ví dụ: hóa đơn và top sản phẩm của tháng hiện tại)
-            LocalDate today = LocalDate.now();
-            LocalDate firstDayOfMonth = today.withDayOfMonth(1);
-            LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
-
-            // Đặt giá trị mặc định cho TF_MaKH1 và TF_MaKH3 (ngày đầu và cuối tháng hiện tại)
-            TF_MaKH1.setText(firstDayOfMonth.format(UI_DATE_FORMATTER));
-            TF_MaKH3.setText(lastDayOfMonth.format(UI_DATE_FORMATTER));
-
-            // Tải dữ liệu cho tab đang được chọn (mặc định là "Danh sách hoá đơn")
-            loadDataForSelectedTab();
-
-            // Đặt giá trị mặc định cho ComboBox tháng/năm hiện tại
-            jComboBox1.setSelectedIndex(today.getMonthValue() - 1); // Tháng 1 = index 0
-            // Tìm và chọn năm hiện tại trong jComboBox2 (nếu có)
-            for (int i = 0; i < jComboBox2.getItemCount(); i++) {
-                String yearItem = jComboBox2.getItemAt(i);
-                if (yearItem.contains(String.valueOf(today.getYear()))) {
-                    jComboBox2.setSelectedIndex(i);
-                    break;
-                }
-            }
-
-        } catch (SQLException e) { // Bắt lỗi SQLException từ DAO
-            JOptionPane.showMessageDialog(this, "Lỗi cơ sở dữ liệu khi tải dữ liệu ban đầu: " + e.getMessage(), "Lỗi DB", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Lỗi khi tải dữ liệu ban đầu: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
+        // Cập nhật các số liệu thống kê chung (Doanh thu, Đơn hàng, Tồn kho)
+        updateGeneralStatistics();
     }
 
     private void setupTables() {
@@ -169,61 +172,49 @@ public class QLTKE extends javax.swing.JPanel {
         }
     }
 
-    private void loadDataForSelectedTab() {
-        int selectedTabIndex = jTabbedPane2.getSelectedIndex();
+        private void loadDataForSelectedTab() {
+        int selectedIndex = jTabbedPane2.getSelectedIndex();
         try {
-            if (selectedTabIndex == 0) { // Tab "Danh sách hoá đơn"
+            if (selectedIndex == 0) { // Tab "Danh sách hóa đơn"
+                // Khi chuyển sang tab hóa đơn, kiểm tra xem người dùng đã nhập ngày tìm kiếm chưa
                 String ngayBatDauStr = TF_MaKH1.getText();
                 String ngayKetThucStr = TF_MaKH3.getText();
 
-                if (ngayBatDauStr.isEmpty() || ngayKetThucStr.isEmpty()) {
-                    fillHoaDonTable(new ArrayList<>()); // Xóa bảng nếu thiếu ngày
-                    // Không hiển thị JOptionPane ở đây để tránh popup khi khởi tạo hoặc chuyển tab rỗng
-                    return;
+                // Nếu cả hai ô tìm kiếm ngày đều trống, hiển thị tất cả hóa đơn
+                if (ngayBatDauStr.isEmpty() && ngayKetThucStr.isEmpty()) {
+                    fillHoaDonTable(thongKeDAO.getAllHoaDon());
+                } else {
+                    // Nếu có ngày, thực hiện lọc theo ngày đã nhập
+                    try {
+                        LocalDate startDate = LocalDate.parse(ngayBatDauStr, UI_DATE_FORMATTER);
+                        LocalDate endDate = LocalDate.parse(ngayKetThucStr, UI_DATE_FORMATTER);
+                        fillHoaDonTable(thongKeDAO.getDanhSachHoaDonByDateRange(startDate, endDate));
+                    } catch (DateTimeParseException e) {
+                        JOptionPane.showMessageDialog(this, "Ngày không đúng định dạng. Vui lòng nhập theo định dạng YYYY-MM-DD.", "Lỗi định dạng ngày", JOptionPane.ERROR_MESSAGE);
+                        // Xóa bảng nếu ngày không hợp lệ
+                        fillHoaDonTable(new ArrayList<>());
+                    }
                 }
-
-                LocalDate startDate = LocalDate.parse(ngayBatDauStr, UI_DATE_FORMATTER);
-                LocalDate endDate = LocalDate.parse(ngayKetThucStr, UI_DATE_FORMATTER);
-
-                if (startDate.isAfter(endDate)) {
-                    fillHoaDonTable(new ArrayList<>()); // Xóa bảng nếu ngày không hợp lệ
-                    JOptionPane.showMessageDialog(this, "Ngày bắt đầu không được sau ngày kết thúc.", "Lỗi", JOptionPane.WARNING_MESSAGE);
-                    return;
-                }
-                List<HoaDon> danhSachHoaDon = thongKeDAO.getDanhSachHoaDonByDateRange(startDate, endDate);
-                fillHoaDonTable(danhSachHoaDon);
-
-            } else if (selectedTabIndex == 1) { // Tab "Top 5 sản phẩm"
-                int selectedMonthIndex = jComboBox1.getSelectedIndex();
-                int selectedYearIndex = jComboBox2.getSelectedIndex();
-
-                if (selectedMonthIndex == -1 || selectedYearIndex == -1) {
-                    fillTopSanPhamTable(new ArrayList<>()); // Xóa bảng nếu thiếu lựa chọn
-                    // Không hiển thị JOptionPane ở đây để tránh popup khi khởi tạo hoặc chuyển tab rỗng
-                    return;
-                }
-
-                int month = selectedMonthIndex + 1;
+            } else if (selectedIndex == 1) { // Tab "Top 5 sản phẩm"
+                // Logic tải Top 5 sản phẩm theo tháng/năm đã chọn
+                int month = jComboBox1.getSelectedIndex() + 1;
                 String yearItem = (String) jComboBox2.getSelectedItem();
-                int year = Integer.parseInt(yearItem.replace("Năm ", ""));
+                int year = 0;
+                try {
+                    year = Integer.parseInt(yearItem.replace("Năm ", ""));
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(this, "Lỗi định dạng năm trong ComboBox. Vui lòng kiểm tra lại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                    year = LocalDate.now().getYear(); // Mặc định về năm hiện tại nếu có lỗi
+                }
 
                 LocalDate startDate = LocalDate.of(year, month, 1);
                 LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
-
-                List<TopSanPham> topSanPhamList = thongKeDAO.getTop5SanPhamByDateRange(startDate, endDate);
-                fillTopSanPhamTable(topSanPhamList);
+                fillTopSanPhamTable(thongKeDAO.getTop5SanPhamByDateRange(startDate, endDate));
             }
-        } catch (DateTimeParseException e) {
-            JOptionPane.showMessageDialog(this, "Ngày không đúng định dạng. Vui lòng nhập theo định dạng YYYY-MM-DD.", "Lỗi định dạng ngày", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
+            // Cập nhật các số liệu thống kê chung mỗi khi chuyển tab
+            updateGeneralStatistics();
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Lỗi cơ sở dữ liệu khi tải dữ liệu cho tab: " + e.getMessage(), "Lỗi DB", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        } catch (NumberFormatException e) { // Bắt lỗi khi parse năm từ ComboBox
-            JOptionPane.showMessageDialog(this, "Lỗi định dạng năm. Vui lòng kiểm tra lại ComboBox năm.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Đã xảy ra lỗi khi tải dữ liệu cho tab: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
     }
@@ -245,12 +236,12 @@ public class QLTKE extends javax.swing.JPanel {
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
+        jLabel_DoanhThu = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
+        jLabel_DonHang = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
-        jLabel7 = new javax.swing.JLabel();
+        jLabel_TonKho = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel10 = new javax.swing.JPanel();
@@ -325,8 +316,8 @@ public class QLTKE extends javax.swing.JPanel {
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 30)); // NOI18N
         jLabel1.setText("Doanh thu");
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel3.setText("00");
+        jLabel_DoanhThu.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel_DoanhThu.setText("00");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -339,7 +330,7 @@ public class QLTKE extends javax.swing.JPanel {
                         .addComponent(jLabel1))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(108, 108, 108)
-                        .addComponent(jLabel3)))
+                        .addComponent(jLabel_DoanhThu)))
                 .addContainerGap(66, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -348,7 +339,7 @@ public class QLTKE extends javax.swing.JPanel {
                 .addGap(21, 21, 21)
                 .addComponent(jLabel1)
                 .addGap(63, 63, 63)
-                .addComponent(jLabel3)
+                .addComponent(jLabel_DoanhThu)
                 .addContainerGap(58, Short.MAX_VALUE))
         );
 
@@ -357,8 +348,8 @@ public class QLTKE extends javax.swing.JPanel {
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 30)); // NOI18N
         jLabel4.setText("Đơn hàng");
 
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel5.setText("00");
+        jLabel_DonHang.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel_DonHang.setText("00");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -371,7 +362,7 @@ public class QLTKE extends javax.swing.JPanel {
                         .addComponent(jLabel4))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(115, 115, 115)
-                        .addComponent(jLabel5)))
+                        .addComponent(jLabel_DonHang)))
                 .addContainerGap(80, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
@@ -380,14 +371,14 @@ public class QLTKE extends javax.swing.JPanel {
                 .addGap(21, 21, 21)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 62, Short.MAX_VALUE)
-                .addComponent(jLabel5)
+                .addComponent(jLabel_DonHang)
                 .addGap(59, 59, 59))
         );
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
-        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
-        jLabel7.setText("00");
+        jLabel_TonKho.setFont(new java.awt.Font("Segoe UI", 1, 24)); // NOI18N
+        jLabel_TonKho.setText("00");
 
         jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 30)); // NOI18N
         jLabel10.setText("Tồn kho");
@@ -398,7 +389,7 @@ public class QLTKE extends javax.swing.JPanel {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(108, 108, 108)
-                .addComponent(jLabel7)
+                .addComponent(jLabel_TonKho)
                 .addContainerGap(105, Short.MAX_VALUE))
             .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
@@ -410,7 +401,7 @@ public class QLTKE extends javax.swing.JPanel {
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(125, 125, 125)
-                .addComponent(jLabel7)
+                .addComponent(jLabel_TonKho)
                 .addContainerGap(58, Short.MAX_VALUE))
             .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(jPanel4Layout.createSequentialGroup()
@@ -668,7 +659,7 @@ public class QLTKE extends javax.swing.JPanel {
 
     private void BT_timkhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BT_timkhActionPerformed
         // TODO add your handling code here:
-        String ngayBatDauStr = TF_MaKH1.getText();
+                String ngayBatDauStr = TF_MaKH1.getText();
         String ngayKetThucStr = TF_MaKH3.getText();
 
         if (ngayBatDauStr.isEmpty() || ngayKetThucStr.isEmpty()) {
@@ -677,25 +668,21 @@ public class QLTKE extends javax.swing.JPanel {
         }
 
         try {
-            LocalDate startDate = LocalDate.parse(ngayBatDauStr); // Chuyển đổi String sang LocalDate
-            LocalDate endDate = LocalDate.parse(ngayKetThucStr);   // Chuyển đổi String sang LocalDate
+            LocalDate startDate = LocalDate.parse(ngayBatDauStr, UI_DATE_FORMATTER); // Sử dụng formatter tường minh
+            LocalDate endDate = LocalDate.parse(ngayKetThucStr, UI_DATE_FORMATTER); // Sử dụng formatter tường minh
 
             if (startDate.isAfter(endDate)) {
                 JOptionPane.showMessageDialog(this, "Ngày bắt đầu không được sau ngày kết thúc.", "Lỗi", JOptionPane.WARNING_MESSAGE);
                 return;
             }
 
-            // Gọi DAO để lấy danh sách hóa đơn theo khoảng thời gian
             List<HoaDon> danhSachHoaDon = thongKeDAO.getDanhSachHoaDonByDateRange(startDate, endDate);
-            fillHoaDonTable(danhSachHoaDon); // Đổ dữ liệu vào bảng
-
-            // Chuyển sang tab "Danh sách hóa đơn" để hiển thị kết quả
-            jTabbedPane2.setSelectedIndex(0);
-
+            fillHoaDonTable(danhSachHoaDon);
+            jTabbedPane2.setSelectedIndex(0); // Chuyển sang tab "Danh sách hóa đơn" để hiển thị kết quả
+            updateGeneralStatistics(); // Cập nhật lại thống kê sau khi lọc
         } catch (DateTimeParseException e) {
             JOptionPane.showMessageDialog(this, "Ngày không đúng định dạng. Vui lòng nhập theo định dạng YYYY-MM-DD.", "Lỗi định dạng ngày", JOptionPane.ERROR_MESSAGE);
-            // e.printStackTrace(); // Bỏ comment này để debug nếu cần
-        } catch (Exception e) {
+        } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Đã xảy ra lỗi khi tìm kiếm hóa đơn: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
@@ -818,13 +805,13 @@ public class QLTKE extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel27;
     private javax.swing.JLabel jLabel28;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
+    private javax.swing.JLabel jLabel_DoanhThu;
+    private javax.swing.JLabel jLabel_DonHang;
+    private javax.swing.JLabel jLabel_TonKho;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel2;
