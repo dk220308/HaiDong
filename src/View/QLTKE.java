@@ -36,19 +36,15 @@ public class QLTKE extends javax.swing.JPanel {
      * Creates new form QLTKE
      */
     public QLTKE() {
-        initComponents(); // Phương thức khởi tạo GUI tự động bởi NetBeans
+        initComponents();
         thongKeDAO = new ThongKeDAO();
         setupTables();
-        initData(); // Tải dữ liệu ban đầu khi panel được khởi tạo
-        
-        
-         try {
-            fillHoaDonTable(thongKeDAO.getAllHoaDon());
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Lỗi khi tải tất cả hóa đơn ban đầu: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
+        initData(); // Tải dữ liệu ban đầu và cập nhật thống kê chung
 
+        // Gọi loadDataForSelectedTab() một lần để đảm bảo tab đầu tiên (Danh sách hóa đơn)
+        // hiển thị dữ liệu ngay khi khởi tạo, thay thế cho khối try-catch cũ.
+        // Điều này sẽ gọi fillHoaDonTable(thongKeDAO.getAllHoaDon()) ban đầu.
+        loadDataForSelectedTab();
 
         // Thêm ChangeListener cho jTabbedPane2 để tải lại dữ liệu khi chuyển tab
         jTabbedPane2.addChangeListener(new ChangeListener() {
@@ -58,31 +54,25 @@ public class QLTKE extends javax.swing.JPanel {
             }
         });
     }
-    
-    
+
     private void updateGeneralStatistics() {
-    try {
-        // Lấy tổng doanh thu
-        double totalRevenue = thongKeDAO.getTongDoanhThu();
-        jLabel_DoanhThu.setText(String.format("%,.0f VNĐ", totalRevenue)); // Giả sử bạn có JLabel tên là jLabel_DoanhThu
+        try {
+            double totalRevenue = thongKeDAO.getTongDoanhThu();
+            jLabel_DoanhThu.setText(String.format("%,.0f VNĐ", totalRevenue));
 
-        // Lấy tổng số đơn hàng
-        int totalOrders = thongKeDAO.getTongDonHang();
-        jLabel_DonHang.setText(String.valueOf(totalOrders)); // Giả sử bạn có JLabel tên là jLabel_DonHang
+            int totalOrders = thongKeDAO.getTongDonHang();
+            jLabel_DonHang.setText(String.valueOf(totalOrders));
 
-        // Lấy tổng số lượng tồn kho
-        int totalStock = thongKeDAO.getTongSoLuongTonKho(); // Đảm bảo đã sửa lỗi tên cột trong phương thức này ở ThongKeDAO
-        jLabel_TonKho.setText(String.valueOf(totalStock)); // Giả sử bạn có JLabel tên là jLabel_TonKho
+            int totalStock = thongKeDAO.getTongSoLuongTonKho();
+            jLabel_TonKho.setText(String.valueOf(totalStock));
 
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(this, "Lỗi khi cập nhật số liệu thống kê chung: " + e.getMessage(), "Lỗi DB", JOptionPane.ERROR_MESSAGE);
-        e.printStackTrace();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Lỗi khi cập nhật số liệu thống kê chung: " + e.getMessage(), "Lỗi DB", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
     }
-}
 
     private void initData() {
-        // Thiết lập ngày tháng mặc định cho ô tìm kiếm (ví dụ: ngày đầu và cuối tháng hiện tại)
-        // Bạn có thể để trống nếu muốn người dùng tự nhập, hoặc giữ nguyên để có giá trị gợi ý
         LocalDate today = LocalDate.now();
         LocalDate firstDayOfMonth = today.withDayOfMonth(1);
         LocalDate lastDayOfMonth = today.withDayOfMonth(today.lengthOfMonth());
@@ -90,11 +80,10 @@ public class QLTKE extends javax.swing.JPanel {
         TF_MaKH1.setText(firstDayOfMonth.format(UI_DATE_FORMATTER));
         TF_MaKH3.setText(lastDayOfMonth.format(UI_DATE_FORMATTER));
 
-        // Thiết lập tháng và năm mặc định cho JComboBox của tab "Top 5 sản phẩm"
-        jComboBox1.setSelectedIndex(today.getMonthValue() - 1); // Tháng trong LocalDate là 1-12, index là 0-11
-        jComboBox2.setSelectedItem("Năm " + today.getYear()); // Giả sử định dạng là "Năm YYYY"
+        jComboBox1.setSelectedIndex(today.getMonthValue() - 1);
+        jComboBox2.setSelectedItem("Năm " + today.getYear());
 
-        // Cập nhật các số liệu thống kê chung (Doanh thu, Đơn hàng, Tồn kho)
+        // updateGeneralStatistics() được gọi ở đây để đảm bảo thống kê cập nhật ngay khi Panel được tạo
         updateGeneralStatistics();
     }
 
@@ -172,52 +161,39 @@ public class QLTKE extends javax.swing.JPanel {
         }
     }
 
-        private void loadDataForSelectedTab() {
-        int selectedIndex = jTabbedPane2.getSelectedIndex();
-        try {
-            if (selectedIndex == 0) { // Tab "Danh sách hóa đơn"
-                // Khi chuyển sang tab hóa đơn, kiểm tra xem người dùng đã nhập ngày tìm kiếm chưa
-                String ngayBatDauStr = TF_MaKH1.getText();
-                String ngayKetThucStr = TF_MaKH3.getText();
+private void loadDataForSelectedTab() {
+    int selectedIndex = jTabbedPane2.getSelectedIndex();
+    try {
+        if (selectedIndex == 0) { // Tab "Danh sách hóa đơn"
+            // Khi mở tab hóa đơn, luôn hiển thị tất cả hóa đơn ban đầu
+            // Sau đó, nếu người dùng nhập ngày và nhấn "Tìm", sẽ lọc theo ngày.
+            fillHoaDonTable(thongKeDAO.getAllHoaDon()); // Hiển thị tất cả hóa đơn
 
-                // Nếu cả hai ô tìm kiếm ngày đều trống, hiển thị tất cả hóa đơn
-                if (ngayBatDauStr.isEmpty() && ngayKetThucStr.isEmpty()) {
-                    fillHoaDonTable(thongKeDAO.getAllHoaDon());
-                } else {
-                    // Nếu có ngày, thực hiện lọc theo ngày đã nhập
-                    try {
-                        LocalDate startDate = LocalDate.parse(ngayBatDauStr, UI_DATE_FORMATTER);
-                        LocalDate endDate = LocalDate.parse(ngayKetThucStr, UI_DATE_FORMATTER);
-                        fillHoaDonTable(thongKeDAO.getDanhSachHoaDonByDateRange(startDate, endDate));
-                    } catch (DateTimeParseException e) {
-                        JOptionPane.showMessageDialog(this, "Ngày không đúng định dạng. Vui lòng nhập theo định dạng YYYY-MM-DD.", "Lỗi định dạng ngày", JOptionPane.ERROR_MESSAGE);
-                        // Xóa bảng nếu ngày không hợp lệ
-                        fillHoaDonTable(new ArrayList<>());
-                    }
-                }
-            } else if (selectedIndex == 1) { // Tab "Top 5 sản phẩm"
-                // Logic tải Top 5 sản phẩm theo tháng/năm đã chọn
-                int month = jComboBox1.getSelectedIndex() + 1;
-                String yearItem = (String) jComboBox2.getSelectedItem();
-                int year = 0;
-                try {
-                    year = Integer.parseInt(yearItem.replace("Năm ", ""));
-                } catch (NumberFormatException e) {
-                    JOptionPane.showMessageDialog(this, "Lỗi định dạng năm trong ComboBox. Vui lòng kiểm tra lại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    year = LocalDate.now().getYear(); // Mặc định về năm hiện tại nếu có lỗi
-                }
+            // Giữ nguyên giá trị ngày tháng mặc định trong TF_MaKH1 và TF_MaKH3
+            // để người dùng dễ dàng chọn khoảng thời gian mong muốn.
+            // Họ sẽ phải nhấn nút "Tìm" để áp dụng bộ lọc đó.
 
-                LocalDate startDate = LocalDate.of(year, month, 1);
-                LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
-                fillTopSanPhamTable(thongKeDAO.getTop5SanPhamByDateRange(startDate, endDate));
+        } else if (selectedIndex == 1) { // Tab "Top 5 sản phẩm"
+            int month = jComboBox1.getSelectedIndex() + 1;
+            String yearItem = (String) jComboBox2.getSelectedItem();
+            int year = 0;
+            try {
+                year = Integer.parseInt(yearItem.replace("Năm ", ""));
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Lỗi định dạng năm trong ComboBox. Vui lòng kiểm tra lại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                year = LocalDate.now().getYear();
             }
-            // Cập nhật các số liệu thống kê chung mỗi khi chuyển tab
-            updateGeneralStatistics();
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Lỗi cơ sở dữ liệu khi tải dữ liệu cho tab: " + e.getMessage(), "Lỗi DB", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
+
+            LocalDate startDate = LocalDate.of(year, month, 1);
+            LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+            fillTopSanPhamTable(thongKeDAO.getTop5SanPhamByDateRange(startDate, endDate));
         }
+        updateGeneralStatistics();
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Lỗi cơ sở dữ liệu khi tải dữ liệu cho tab: " + e.getMessage(), "Lỗi DB", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
     }
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -652,14 +628,14 @@ public class QLTKE extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     // <editor-fold defaultstate="collapsed" desc="Generated Code">
-    
+
     private void TF_MaKH2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TF_MaKH2ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_TF_MaKH2ActionPerformed
 
     private void BT_timkhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BT_timkhActionPerformed
         // TODO add your handling code here:
-                String ngayBatDauStr = TF_MaKH1.getText();
+        String ngayBatDauStr = TF_MaKH1.getText();
         String ngayKetThucStr = TF_MaKH3.getText();
 
         if (ngayBatDauStr.isEmpty() || ngayKetThucStr.isEmpty()) {
@@ -737,12 +713,10 @@ public class QLTKE extends javax.swing.JPanel {
 
     private void jTable2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable2MouseClicked
         // TODO add your handling code here:
-        
+
     }//GEN-LAST:event_jTable2MouseClicked
 
-    
-    
-     public static void main(String args[]) {
+    public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
@@ -767,22 +741,22 @@ public class QLTKE extends javax.swing.JPanel {
             public void run() {
                 // Tạo một JFrame mới
                 JFrame frame = new JFrame("Quản Lý Thống Kê"); // Tiêu đề cửa sổ
-                
+
                 // Tạo đối tượng QLTKE panel
                 QLTKE qltkePanel = new QLTKE();
-                
+
                 // Thêm QLTKE panel vào JFrame
                 frame.add(qltkePanel);
-                
+
                 // Đặt kích thước cho JFrame (hoặc pack() để tự động điều chỉnh theo nội dung)
                 frame.setSize(1400, 800); // Kích thước ví dụ, bạn có thể điều chỉnh
-                
+
                 // Đặt thao tác mặc định khi đóng cửa sổ
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                
+
                 // Đặt vị trí cửa sổ ở giữa màn hình
                 frame.setLocationRelativeTo(null);
-                
+
                 // Hiển thị JFrame
                 frame.setVisible(true);
             }
