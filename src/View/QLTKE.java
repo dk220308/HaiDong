@@ -161,32 +161,53 @@ public class QLTKE extends javax.swing.JPanel {
         }
     }
 
-    private void loadDataForSelectedTab() {
-        int selectedIndex = jTabbedPane2.getSelectedIndex(); // Lấy index của tab đang được chọn
-        try {
-            if (selectedIndex == 0) { // Tab "Danh sách hóa đơn"
-                fillHoaDonTable(thongKeDAO.getAllHoaDon());
-            } else if (selectedIndex == 1) { // Tab "Top 5 sản phẩm"
-                int month = jComboBox1.getSelectedIndex() + 1; // Lấy tháng từ ComboBox (index 0-11 -> tháng 1-12)
-                String yearItem = (String) jComboBox2.getSelectedItem(); // Lấy mục năm từ ComboBox
-                int year = 0;
-                try {
-                    year = Integer.parseInt(yearItem.replace("Năm ", "")); // Chuyển đổi "Năm XXXX" thành XXXX
-                } catch (NumberFormatException e) {
-                    JOptionPane.showMessageDialog(this, "Lỗi định dạng năm trong ComboBox. Vui lòng kiểm tra lại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                    year = LocalDate.now().getYear(); // Mặc định về năm hiện tại nếu lỗi
-                }
-
-                LocalDate startDate = LocalDate.of(year, month, 1); // Ngày đầu tiên của tháng
-                LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth()); // Ngày cuối cùng của tháng
-                fillTopSanPhamTable(thongKeDAO.getTop5SanPhamByDateRange(startDate, endDate));
+private void loadDataForSelectedTab() {
+    int selectedIndex = jTabbedPane2.getSelectedIndex();
+    try {
+        if (selectedIndex == 0) { // Tab "Danh sách hóa đơn"
+            fillHoaDonTable(thongKeDAO.getAllHoaDon()); // Lấy tất cả hóa đơn
+            updateGeneralStatistics(); // Cập nhật thống kê TỔNG QUÁT (tất cả)
+        } else if (selectedIndex == 1) { // Tab "Top 5 sản phẩm"
+            int month = jComboBox1.getSelectedIndex() + 1;
+            String yearItem = (String) jComboBox2.getSelectedItem();
+            int year = 0;
+            try {
+                year = Integer.parseInt(yearItem.replace("Năm ", ""));
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Lỗi định dạng năm trong ComboBox. Vui lòng kiểm tra lại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                year = LocalDate.now().getYear();
             }
-            updateGeneralStatistics(); // Cập nhật thống kê chung mỗi khi tải dữ liệu
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Lỗi cơ sở dữ liệu khi tải dữ liệu cho tab: " + e.getMessage(), "Lỗi DB", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
+
+            LocalDate startDate = LocalDate.of(year, month, 1);
+            LocalDate endDate = startDate.withDayOfMonth(startDate.lengthOfMonth());
+            fillTopSanPhamTable(thongKeDAO.getTop5SanPhamByDateRange(startDate, endDate));
+            // Cập nhật thống kê chung cho tháng/năm đã chọn của Top 5 sản phẩm
+            updateGeneralStatisticsForDateRange(startDate, endDate);
         }
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Lỗi cơ sở dữ liệu khi tải dữ liệu cho tab: " + e.getMessage(), "Lỗi DB", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
     }
+}
+    
+    private void updateGeneralStatisticsForDateRange(LocalDate startDate, LocalDate endDate) {
+    try {
+        double totalRevenue = thongKeDAO.getTongDoanhThuByDateRange(startDate, endDate); // Gọi phương thức mới từ DAO
+        jLabel_DoanhThu.setText(String.format("%,.0f VNĐ", totalRevenue)); // Cập nhật Label Doanh thu
+
+        int totalOrders = thongKeDAO.getTongDonHangByDateRange(startDate, endDate); // Gọi phương thức mới từ DAO
+        jLabel_DonHang.setText(String.valueOf(totalOrders)); // Cập nhật Label Đơn hàng
+
+        // Giữ nguyên tổng tồn kho (vì nó không liên quan đến khoảng ngày của hóa đơn)
+        // Hoặc bạn có thể tạo một phương thức riêng nếu muốn tồn kho cũng thay đổi theo điều kiện nào đó.
+        int totalStock = thongKeDAO.getTongSoLuongTonKho();
+        jLabel_TonKho.setText(String.valueOf(totalStock));
+
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Lỗi khi cập nhật số liệu thống kê chung theo khoảng ngày: " + e.getMessage(), "Lỗi DB", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+    }
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -638,22 +659,26 @@ public class QLTKE extends javax.swing.JPanel {
     private void BT_timkhActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BT_timkhActionPerformed
         // TODO add your handling code here:
         try {
-            LocalDate startDate = LocalDate.parse(TF_MaKH1.getText().trim(), UI_DATE_FORMATTER);
-            LocalDate endDate = LocalDate.parse(TF_MaKH3.getText().trim(), UI_DATE_FORMATTER);
+        LocalDate startDate = LocalDate.parse(TF_MaKH1.getText().trim(), UI_DATE_FORMATTER); // Đảm bảo TF_MaKH1 là trường Ngày bắt đầu
+        LocalDate endDate = LocalDate.parse(TF_MaKH3.getText().trim(), UI_DATE_FORMATTER);   // Đảm bảo TF_MaKH3 là trường Ngày kết thúc
 
-            if (startDate.isAfter(endDate)) {
-                JOptionPane.showMessageDialog(this, "Ngày bắt đầu không được sau ngày kết thúc.", "Lỗi", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-            fillHoaDonTable(thongKeDAO.getDanhSachHoaDonByDateRange(startDate, endDate));
-            updateGeneralStatistics(); // Cập nhật thống kê chung sau khi lọc
-        } catch (DateTimeParseException e) {
-            JOptionPane.showMessageDialog(this, "Ngày không hợp lệ. Vui lòng nhập theo định dạng yyyy-MM-dd.", "Lỗi Định Dạng", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Lỗi khi tìm hóa đơn theo ngày: " + e.getMessage(), "Lỗi DB", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
+        if (startDate.isAfter(endDate)) {
+            JOptionPane.showMessageDialog(this, "Ngày bắt đầu không được sau ngày kết thúc.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            return;
         }
+
+        fillHoaDonTable(thongKeDAO.getDanhSachHoaDonByDateRange(startDate, endDate));
+
+        // Dòng QUAN TRỌNG: Gọi phương thức để cập nhật các Label thống kê
+        updateGeneralStatisticsForDateRange(startDate, endDate); // Gọi phương thức để cập nhật thống kê theo khoảng ngày đã chọn
+
+    } catch (DateTimeParseException e) {
+        JOptionPane.showMessageDialog(this, "Ngày không hợp lệ. Vui lòng nhập theo định dạng yyyy-MM-dd.", "Lỗi Định Dạng", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Lỗi khi tìm hóa đơn theo ngày: " + e.getMessage(), "Lỗi DB", JOptionPane.ERROR_MESSAGE);
+        e.printStackTrace();
+    }
     }//GEN-LAST:event_BT_timkhActionPerformed
 
     private void TF_MaKH3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TF_MaKH3ActionPerformed
