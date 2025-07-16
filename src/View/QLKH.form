@@ -70,6 +70,9 @@
           </Border>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jPanel1MouseClicked"/>
+      </Events>
 
       <Layout>
         <DimensionLayout dim="0">
@@ -379,9 +382,6 @@
             </Component>
             <Component class="javax.swing.JButton" name="BT_timkh">
               <Properties>
-                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-                  <Image iconType="2" name="D:\MOB1014\icons\search.png"/>
-                </Property>
                 <Property name="text" type="java.lang.String" value="T&#xec;m"/>
               </Properties>
               <Events>
@@ -392,9 +392,6 @@
         </Container>
         <Component class="javax.swing.JButton" name="jButton13">
           <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="D:\MOB1014\icons\edit.png"/>
-            </Property>
             <Property name="text" type="java.lang.String" value="S&#x1eed;a"/>
           </Properties>
           <Events>
@@ -405,27 +402,33 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="L&#xe0;m m&#x1edb;i"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton14ActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="jButton15">
           <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="D:\MOB1014\icons\add.png"/>
-            </Property>
             <Property name="text" type="java.lang.String" value="Th&#xea;m"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton15ActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="jButton16">
           <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="D:\MOB1014\icons\delete.png"/>
-            </Property>
             <Property name="text" type="java.lang.String" value="Xo&#xe1;"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton16ActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="jButton17">
           <Properties>
             <Property name="text" type="java.lang.String" value="Kho&#xe1;"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton17ActionPerformed"/>
+          </Events>
         </Component>
         <Container class="javax.swing.JPanel" name="jPanel7">
           <Properties>
@@ -593,6 +596,9 @@
                       </Table>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTable2MouseClicked"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>
@@ -653,6 +659,9 @@
                       </Table>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTable3MouseClicked"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>

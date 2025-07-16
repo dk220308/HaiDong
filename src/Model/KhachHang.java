@@ -1,47 +1,40 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Model;
 
-/**
- *
- * @author XPS
- */
 public class KhachHang {
-    private String makh;
-    private String tenkh;
-    private String gioiTinh;
+    private String maKH;
+    private String tenKH;
+    private String gioiTinh; // "Nam" hoặc "Nữ"
     private String sdt;
-    private String trangThai;
+    private String trangThai; // "Khách quen" hoặc "Khách mới"
     private String diaChi;
 
     public KhachHang() {
     }
 
-    public KhachHang(String makh, String tenkh, String gioiTinh, String sdt, String trangThai, String diaChi) {
-        this.makh = makh;
-        this.tenkh = tenkh;
+    public KhachHang(String maKH, String tenKH, String gioiTinh, String sdt, String trangThai, String diaChi) {
+        this.maKH = maKH;
+        this.tenKH = tenKH;
         this.gioiTinh = gioiTinh;
         this.sdt = sdt;
         this.trangThai = trangThai;
         this.diaChi = diaChi;
     }
 
-    public String getMakh() {
-        return makh;
+    // Getters & Setters
+    public String getMaKH() {
+        return maKH;
     }
 
-    public void setMakh(String makh) {
-        this.makh = makh;
+    public void setMaKH(String maKH) {
+        this.maKH = maKH;
     }
 
-    public String getTenkh() {
-        return tenkh;
+    public String getTenKH() {
+        return tenKH;
     }
 
-    public void setTenkh(String tenkh) {
-        this.tenkh = tenkh;
+    public void setTenKH(String tenKH) {
+        this.tenKH = tenKH;
     }
 
     public String getGioiTinh() {
@@ -75,6 +68,4 @@ public class KhachHang {
     public void setDiaChi(String diaChi) {
         this.diaChi = diaChi;
     }
-
-    
 }

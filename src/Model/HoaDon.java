@@ -1,18 +1,16 @@
 package Model;
 
-// import java.time.LocalDate; // Không cần import này nếu ngayTao là String
+import java.time.LocalDate; // Import LocalDate
 
-/**
- *
- * @author XPS
- */
 public class HoaDon {
     private String mahd;
-    private String Manv;
-    private String tenkh;
-    private String sdt;
+    private String manv;
+    // tempTenKH và tempSdt sẽ được điền thông qua JOIN từ bảng KhachHang cho mục đích hiển thị trên UI
+    private String tempTenKH; 
+    private String tempSdt;   
+
     private String trangThai;
-    private String ngayTao; // Giữ nguyên là String để khớp với DB nvarchar(20)
+    private LocalDate ngayTao; // Đã thay đổi kiểu dữ liệu thành LocalDate
     private double tongTien;
     private double tienTra;
     private double tienThua;
@@ -23,12 +21,12 @@ public class HoaDon {
     public HoaDon() {
     }
 
-    // Constructor đã cập nhật để nhận String cho ngayTao
-    public HoaDon(String mahd, String Manv, String tenkh, String sdt, String trangThai, String ngayTao, double tongTien, double tienTra, double tienThua, String thanhToan, String giaoHang, String ghiChu) {
+    // Constructor đã cập nhật để nhận LocalDate cho ngayTao
+    public HoaDon(String mahd, String manv, String tempTenKH, String tempSdt, String trangThai, LocalDate ngayTao, double tongTien, double tienTra, double tienThua, String thanhToan, String giaoHang, String ghiChu) {
         this.mahd = mahd;
-        this.Manv = Manv;
-        this.tenkh = tenkh;
-        this.sdt = sdt;
+        this.manv = manv;
+        this.tempTenKH = tempTenKH;
+        this.tempSdt = tempSdt;
         this.trangThai = trangThai;
         this.ngayTao = ngayTao;
         this.tongTien = tongTien;
@@ -48,27 +46,29 @@ public class HoaDon {
     }
 
     public String getManv() {
-        return Manv;
+        return manv;
     }
 
-    public void setManv(String Manv) {
-        this.Manv = Manv;
+    public void setManv(String manv) {
+        this.manv = manv;
     }
 
+    // Getter và Setter cho TenKH (tạm thời cho hiển thị từ JOIN)
     public String getTenkh() {
-        return tenkh;
+        return tempTenKH;
     }
 
-    public void setTenkh(String tenkh) {
-        this.tenkh = tenkh;
+    public void setTenkh(String tempTenKH) {
+        this.tempTenKH = tempTenKH;
     }
 
+    // Getter và Setter cho Sdt (tạm thời cho hiển thị từ JOIN)
     public String getSdt() {
-        return sdt;
+        return tempSdt;
     }
 
-    public void setSdt(String sdt) {
-        this.sdt = sdt;
+    public void setSdt(String tempSdt) {
+        this.tempSdt = tempSdt;
     }
 
     public String getTrangThai() {
@@ -79,13 +79,12 @@ public class HoaDon {
         this.trangThai = trangThai;
     }
 
-    // Getter cho String
-    public String getNgayTao() {
+    // Getter và Setter cho ngayTao (kiểu LocalDate)
+    public LocalDate getNgayTao() {
         return ngayTao;
     }
 
-    // Setter cho String
-    public void setNgayTao(String ngayTao) {
+    public void setNgayTao(LocalDate ngayTao) {
         this.ngayTao = ngayTao;
     }
 
