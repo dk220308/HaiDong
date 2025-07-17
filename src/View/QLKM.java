@@ -28,196 +28,196 @@ public class QLKM extends javax.swing.JPanel {
      */
     public QLKM() {
         initComponents();
-        initTableKhuyenMai();
-        initTableSanPham();
-        fillTableKhuyenMai();
-        fillTableSanPham();
-    }
+//        initTableKhuyenMai();
+//        initTableSanPham();
+//        fillTableKhuyenMai();
+//        fillTableSanPham();
+//    }
+//
+//    public void initTableKhuyenMai() {
+//        String[] cols = new String[]{
+//            "Mã KM", "Mã SP", "Tên KM", "Ngày Bắt đầu", "Ngày Kết thúc", "Loại SP", "Giảm giá", "Trạng thái"
+//        };
+//        tableModelKM = new DefaultTableModel();
+//        tableModelKM.setColumnIdentifiers(cols);
+//        jTable2.setModel(tableModelKM);
+//    }
 
-    public void initTableKhuyenMai() {
-        String[] cols = new String[]{
-            "Mã KM", "Mã SP", "Tên KM", "Ngày Bắt đầu", "Ngày Kết thúc", "Loại SP", "Giảm giá", "Trạng thái"
-        };
-        tableModelKM = new DefaultTableModel();
-        tableModelKM.setColumnIdentifiers(cols);
-        jTable2.setModel(tableModelKM);
-    }
+//    public void initTableSanPham() {
+//        String[] cols = new String[]{"Mã SP", "Tên SP", "Loại SP", "Giá", "Số Lượng", "Màu Sắc", "Kích Thước", "Chất Liệu", "Trạng thái"};
+//        tableModelSP = new DefaultTableModel();
+//        tableModelSP.setColumnIdentifiers(cols);
+//        jTable1.setModel(tableModelSP);
+//    }
 
-    public void initTableSanPham() {
-        String[] cols = new String[]{"Mã SP", "Tên SP", "Loại SP", "Giá", "Số Lượng", "Màu Sắc", "Kích Thước", "Chất Liệu", "Trạng thái"};
-        tableModelSP = new DefaultTableModel();
-        tableModelSP.setColumnIdentifiers(cols);
-        jTable1.setModel(tableModelSP);
-    }
+//    public void fillTableKhuyenMai() {
+//        tableModelKM.setRowCount(0);
+//        for (KhuyenMai km : kmdao.getAllKM()) {
+//            tableModelKM.addRow(kmdao.getRowKM(km));
+//        }
+//    }
+//
+//    public void fillTableSanPham() {
+//        tableModelSP.setRowCount(0);
+//        for (SanPham sp : spdao.getAll()) {
+//            tableModelSP.addRow(spdao.getRow(sp));
+//        }
+//    }
+//
+////    private boolean validateFormKhuyenMai() {
+//        String maKM = TF_MaKM.getText();
+//        if (maKM == null || !maKM.trim().startsWith("KM")) {
+//            JOptionPane.showMessageDialog(this, "Mã khuyến mãi phải bắt đầu bằng 'KM'.");
+//            TF_MaKM.requestFocus();
+//            return false;
+//        }
+//
+//        if (TF_TenKM.getText().trim().isEmpty()) {
+//            JOptionPane.showMessageDialog(this, "Vui lòng nhập tên khuyến mãi.");
+//            return false;
+//        }
+//
+//        if (TF_NgayBD.getText().trim().isEmpty()) {
+//            JOptionPane.showMessageDialog(this, "Vui lòng nhập ngày bắt đầu.");
+//            return false;
+//        }
+//
+//        if (TF_NgayKT.getText().trim().isEmpty()) {
+//            JOptionPane.showMessageDialog(this, "Vui lòng nhập ngày kết thúc.");
+//            return false;
+//        }
+//
+//        if (TF_GiamGia.getText().trim().isEmpty()) {
+//            JOptionPane.showMessageDialog(this, "Vui lòng nhập giảm giá.");
+//            return false;
+//        }
+//
+//        try {
+//            float gg = Float.parseFloat(TF_GiamGia.getText().trim());
+//            if (gg < 0 || gg > 1) {
+//                JOptionPane.showMessageDialog(this, "Giảm giá phải từ 0 đến 1.");
+//                return false;
+//            }
+//        } catch (NumberFormatException e) {
+//            JOptionPane.showMessageDialog(this, "Giảm giá phải là số hợp lệ.");
+//            return false;
+//        }
+//
+//        if (jComboBox2.getSelectedItem() == null || jComboBox2.getSelectedItem().toString().trim().isEmpty()) {
+//            JOptionPane.showMessageDialog(this, "Vui lòng chọn trạng thái.");
+//            return false;
+//        }
+//
+//        return true;
+//    }
 
-    public void fillTableKhuyenMai() {
-        tableModelKM.setRowCount(0);
-        for (KhuyenMai km : kmdao.getAllKM()) {
-            tableModelKM.addRow(kmdao.getRowKM(km));
-        }
-    }
+//    public void showDetailKhuyenMai() {
+//        int i = jTable2.getSelectedRow();
+//        if (i >= 0) {
+//            KhuyenMai km = kmdao.getAllKM().get(i);
+//
+//            TF_MaKM.setText(km.getMaKM());
+//            TF_TenKM.setText(km.getTenKm());
+//            TF_NgayBD.setText(km.getNgayBdau());
+//            TF_NgayKT.setText(km.getNgayKthuc());
+//            TF_GiamGia.setText(String.valueOf(km.getGiamgia())); // ✅ đã sửa
+//            jComboBox2.setSelectedItem(km.getTrangThai());
+//        }
+//    }
 
-    public void fillTableSanPham() {
-        tableModelSP.setRowCount(0);
-        for (SanPham sp : spdao.getAll()) {
-            tableModelSP.addRow(spdao.getRow(sp));
-        }
-    }
+//    public void capNhatKhuyenMai() {
+//        String maKM = TF_MaKM.getText().trim();
+//        String tenKm = TF_TenKM.getText().trim();
+//        String ngayBd = TF_NgayBD.getText().trim();
+//        String ngayKt = TF_NgayKT.getText().trim();
+//        String loaiSP = TF_LoaiSP.getText().trim();
+//
+//        String trangThai = jComboBox2.getSelectedItem().toString().trim();
+//
+//        float giamGia = 0;
+//        try {
+//            giamGia = Float.parseFloat(TF_GiamGia.getText().trim());
+//        } catch (NumberFormatException e) {
+//            JOptionPane.showMessageDialog(this, "Giảm giá phải là số hợp lệ.");
+//            return;
+//        }
+//
+//        if (maKM.isEmpty() || tenKm.isEmpty() || ngayBd.isEmpty() || ngayKt.isEmpty()) {
+//            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin.");
+//            return;
+//        }
+//
+//        KhuyenMai km = new KhuyenMai(maKM, "", tenKm, ngayBd, ngayKt, loaiSP, giamGia, trangThai);
+//
+//        int result = kmdao.capNhatKhuyenMai(km);
+//        if (result == 1) {
+//            fillTableKhuyenMai();
+//            JOptionPane.showMessageDialog(this, "Cập nhật khuyến mãi thành công!");
+//        } else {
+//            JOptionPane.showMessageDialog(this, "Cập nhật khuyến mãi thất bại!");
+//        }
+//    }
 
-    private boolean validateFormKhuyenMai() {
-        String maKM = TF_MaKM.getText();
-        if (maKM == null || !maKM.trim().startsWith("KM")) {
-            JOptionPane.showMessageDialog(this, "Mã khuyến mãi phải bắt đầu bằng 'KM'.");
-            TF_MaKM.requestFocus();
-            return false;
-        }
+//    public void xoaKhuyenMai() {
+//        int i = jTable2.getSelectedRow();
+//        if (i >= 0) {
+//            int chon = JOptionPane.showConfirmDialog(this, "Bạn có thực sự muốn xoá khuyến mãi này?",
+//                    "Xác nhận", JOptionPane.YES_NO_OPTION);
+//
+//            if (chon == JOptionPane.YES_OPTION) {
+//                String maKM = jTable2.getValueAt(i, 0).toString();
+//
+//                int result = kmdao.xoaKhuyenMai(maKM);
+//                if (result == 1) {
+//                    fillTableKhuyenMai();
+//                    JOptionPane.showMessageDialog(this, "Xoá khuyến mãi thành công!");
+//                } else {
+//                    JOptionPane.showMessageDialog(this, "Xoá khuyến mãi thất bại!");
+//                }
+//            }
+//        } else {
+//            JOptionPane.showMessageDialog(this, "Vui lòng chọn khuyến mãi để xoá.");
+//        }
+//    }
+//
+//    public void luuKhuyenMai() {
+//        int selectedRow = jTable1.getSelectedRow();
+//        if (selectedRow < 0) {
+//            JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm áp dụng khuyến mãi.");
+//            return;
+//        }
+//
+//
+//        String maSP = jTable1.getValueAt(selectedRow, 0).toString();
+//
+//        String maKM = TF_MaKM.getText().trim();
+//        String tenKm = TF_TenKM.getText().trim();
+//        String ngayBd = TF_NgayBD.getText().trim();
+//        String ngayKt = TF_NgayKT.getText().trim();
+//        String loaiSP = TF_LoaiSP.getText().trim();
+//        String trangThai = jComboBox2.getSelectedItem().toString().trim();
+//
+//        float giamGia = 0;
+//        try {
+//            giamGia = Float.parseFloat(TF_GiamGia.getText().trim());
+//        } catch (NumberFormatException ex) {
+//            JOptionPane.showMessageDialog(this, "Giảm giá phải là số hợp lệ.");
+//            return;
+//        }
+//
+//  
+//        KhuyenMai km = new KhuyenMai(maKM, maSP, tenKm, ngayBd, ngayKt, loaiSP, giamGia, trangThai);
+//
+//        int result = kmdao.luuKhuyenMai(km);
+//        if (result == 1) {
+//            fillTableKhuyenMai(); // Load lại bảng
+//            JOptionPane.showMessageDialog(this, "Thêm khuyến mãi thành công");
+//        } else {
+//            JOptionPane.showMessageDialog(this, "Thêm khuyến mãi thất bại");
+//        }
+//    }
 
-        if (TF_TenKM.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập tên khuyến mãi.");
-            return false;
-        }
-
-        if (TF_NgayBD.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập ngày bắt đầu.");
-            return false;
-        }
-
-        if (TF_NgayKT.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập ngày kết thúc.");
-            return false;
-        }
-
-        if (TF_GiamGia.getText().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập giảm giá.");
-            return false;
-        }
-
-        try {
-            float gg = Float.parseFloat(TF_GiamGia.getText().trim());
-            if (gg < 0 || gg > 1) {
-                JOptionPane.showMessageDialog(this, "Giảm giá phải từ 0 đến 1.");
-                return false;
-            }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Giảm giá phải là số hợp lệ.");
-            return false;
-        }
-
-        if (jComboBox2.getSelectedItem() == null || jComboBox2.getSelectedItem().toString().trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn trạng thái.");
-            return false;
-        }
-
-        return true;
-    }
-
-    public void showDetailKhuyenMai() {
-        int i = jTable2.getSelectedRow();
-        if (i >= 0) {
-            KhuyenMai km = kmdao.getAllKM().get(i);
-
-            TF_MaKM.setText(km.getMaKM());
-            TF_TenKM.setText(km.getTenKm());
-            TF_NgayBD.setText(km.getNgayBdau());
-            TF_NgayKT.setText(km.getNgayKthuc());
-            TF_GiamGia.setText(String.valueOf(km.getGiamgia())); // ✅ đã sửa
-            jComboBox2.setSelectedItem(km.getTrangThai());
-        }
-    }
-
-    public void capNhatKhuyenMai() {
-        String maKM = TF_MaKM.getText().trim();
-        String tenKm = TF_TenKM.getText().trim();
-        String ngayBd = TF_NgayBD.getText().trim();
-        String ngayKt = TF_NgayKT.getText().trim();
-        String loaiSP = TF_LoaiSP.getText().trim();
-
-        String trangThai = jComboBox2.getSelectedItem().toString().trim();
-
-        float giamGia = 0;
-        try {
-            giamGia = Float.parseFloat(TF_GiamGia.getText().trim());
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Giảm giá phải là số hợp lệ.");
-            return;
-        }
-
-        if (maKM.isEmpty() || tenKm.isEmpty() || ngayBd.isEmpty() || ngayKt.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Vui lòng nhập đầy đủ thông tin.");
-            return;
-        }
-
-        KhuyenMai km = new KhuyenMai(maKM, "", tenKm, ngayBd, ngayKt, loaiSP, giamGia, trangThai);
-
-        int result = kmdao.capNhatKhuyenMai(km);
-        if (result == 1) {
-            fillTableKhuyenMai();
-            JOptionPane.showMessageDialog(this, "Cập nhật khuyến mãi thành công!");
-        } else {
-            JOptionPane.showMessageDialog(this, "Cập nhật khuyến mãi thất bại!");
-        }
-    }
-
-    public void xoaKhuyenMai() {
-        int i = jTable2.getSelectedRow();
-        if (i >= 0) {
-            int chon = JOptionPane.showConfirmDialog(this, "Bạn có thực sự muốn xoá khuyến mãi này?",
-                    "Xác nhận", JOptionPane.YES_NO_OPTION);
-
-            if (chon == JOptionPane.YES_OPTION) {
-                String maKM = jTable2.getValueAt(i, 0).toString();
-
-                int result = kmdao.xoaKhuyenMai(maKM);
-                if (result == 1) {
-                    fillTableKhuyenMai();
-                    JOptionPane.showMessageDialog(this, "Xoá khuyến mãi thành công!");
-                } else {
-                    JOptionPane.showMessageDialog(this, "Xoá khuyến mãi thất bại!");
-                }
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn khuyến mãi để xoá.");
-        }
-    }
-
-    public void luuKhuyenMai() {
-        int selectedRow = jTable1.getSelectedRow();
-        if (selectedRow < 0) {
-            JOptionPane.showMessageDialog(this, "Vui lòng chọn sản phẩm áp dụng khuyến mãi.");
-            return;
-        }
-
-
-        String maSP = jTable1.getValueAt(selectedRow, 0).toString();
-
-        String maKM = TF_MaKM.getText().trim();
-        String tenKm = TF_TenKM.getText().trim();
-        String ngayBd = TF_NgayBD.getText().trim();
-        String ngayKt = TF_NgayKT.getText().trim();
-        String loaiSP = TF_LoaiSP.getText().trim();
-        String trangThai = jComboBox2.getSelectedItem().toString().trim();
-
-        float giamGia = 0;
-        try {
-            giamGia = Float.parseFloat(TF_GiamGia.getText().trim());
-        } catch (NumberFormatException ex) {
-            JOptionPane.showMessageDialog(this, "Giảm giá phải là số hợp lệ.");
-            return;
-        }
-
-  
-        KhuyenMai km = new KhuyenMai(maKM, maSP, tenKm, ngayBd, ngayKt, loaiSP, giamGia, trangThai);
-
-        int result = kmdao.luuKhuyenMai(km);
-        if (result == 1) {
-            fillTableKhuyenMai(); // Load lại bảng
-            JOptionPane.showMessageDialog(this, "Thêm khuyến mãi thành công");
-        } else {
-            JOptionPane.showMessageDialog(this, "Thêm khuyến mãi thất bại");
-        }
-    }
-
-    public void lamMoiKhuyenMai() {
+//    public void lamMoiKhuyenMai() {
         TF_MaKM.setText("");
         TF_TenKM.setText("");
         TF_NgayBD.setText("");
@@ -609,7 +609,7 @@ public class QLKM extends javax.swing.JPanel {
     }//GEN-LAST:event_jComboBox2ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        lamMoiKhuyenMai();
+//        lamMoiKhuyenMai();
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
@@ -622,32 +622,32 @@ public class QLKM extends javax.swing.JPanel {
 
     private void jTable2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable2MouseClicked
         // TODO add your handling code here:
-        showDetailKhuyenMai();
+//        showDetailKhuyenMai();
 
     }//GEN-LAST:event_jTable2MouseClicked
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        if (validateFormKhuyenMai()) {
-            capNhatKhuyenMai();
-        }
+//        if (validateFormKhuyenMai()) {
+//            capNhatKhuyenMai();
+//        }
         return;
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        if (validateFormKhuyenMai()) {
-            xoaKhuyenMai();
-        }
-        return;
+//        if (validateFormKhuyenMai()) {
+////            xoaKhuyenMai();
+//        }
+//        return;
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        if (validateFormKhuyenMai()) {
-            luuKhuyenMai();
-        }
-        return;
+//        if (validateFormKhuyenMai()) {
+////            luuKhuyenMai();
+//        }
+//        return;
     }//GEN-LAST:event_jButton1ActionPerformed
 
 

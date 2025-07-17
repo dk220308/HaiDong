@@ -709,52 +709,52 @@ private void loadDataForSelectedTab() {
         loadDataForSelectedTab(); // Tải lại dữ liệu khi tháng thay đổi
     }//GEN-LAST:event_jComboBox2ActionPerformed
 
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(QLTKE.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(QLTKE.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(QLTKE.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(QLTKE.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                // Tạo một JFrame mới
-                JFrame frame = new JFrame("Quản Lý Thống Kê"); // Tiêu đề cửa sổ
-
-                // Tạo đối tượng QLTKE panel
-                QLTKE qltkePanel = new QLTKE();
-
-                // Thêm QLTKE panel vào JFrame
-                frame.add(qltkePanel);
-
-                // Đặt kích thước cho JFrame (hoặc pack() để tự động điều chỉnh theo nội dung)
-                frame.setSize(1400, 800); // Kích thước ví dụ, bạn có thể điều chỉnh
-
-                // Đặt thao tác mặc định khi đóng cửa sổ
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-                // Đặt vị trí cửa sổ ở giữa màn hình
-                frame.setLocationRelativeTo(null);
-
-                // Hiển thị JFrame
-                frame.setVisible(true);
-            }
-        });
-    }
+//    public static void main(String args[]) {
+//        /* Set the Nimbus look and feel */
+//        try {
+//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+//            }
+//        } catch (ClassNotFoundException ex) {
+//            java.util.logging.Logger.getLogger(QLTKE.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (InstantiationException ex) {
+//            java.util.logging.Logger.getLogger(QLTKE.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (IllegalAccessException ex) {
+//            java.util.logging.Logger.getLogger(QLTKE.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+//            java.util.logging.Logger.getLogger(QLTKE.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        }
+//        //</editor-fold>
+//
+//        /* Create and display the form */
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                // Tạo một JFrame mới
+//                JFrame frame = new JFrame("Quản Lý Thống Kê"); // Tiêu đề cửa sổ
+//
+//                // Tạo đối tượng QLTKE panel
+//                QLTKE qltkePanel = new QLTKE();
+//
+//                // Thêm QLTKE panel vào JFrame
+//                frame.add(qltkePanel);
+//
+//                // Đặt kích thước cho JFrame (hoặc pack() để tự động điều chỉnh theo nội dung)
+//                frame.setSize(1400, 800); // Kích thước ví dụ, bạn có thể điều chỉnh
+//
+//                // Đặt thao tác mặc định khi đóng cửa sổ
+//                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//
+//                // Đặt vị trí cửa sổ ở giữa màn hình
+//                frame.setLocationRelativeTo(null);
+//
+//                // Hiển thị JFrame
+//                frame.setVisible(true);
+//            }
+//        });
+//    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

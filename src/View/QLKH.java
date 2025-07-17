@@ -45,36 +45,36 @@ public class QLKH extends javax.swing.JPanel {
             }
         });
     }
-    
-    private void setupTables() {
-    // --- SỬA Ở ĐÂY CHO modelKhachHang ---
-    modelKhachHang = new DefaultTableModel() {
-        @Override
-        public boolean isCellEditable(int row, int column) {
-            return false; // Đặt tất cả các ô không thể chỉnh sửa trực tiếp trên bảng
-        }
-    };
-    modelKhachHang.addColumn("Mã KH");
-    modelKhachHang.addColumn("Tên KH");
-    modelKhachHang.addColumn("Giới tính");
-    modelKhachHang.addColumn("SĐT");
-    modelKhachHang.addColumn("Trạng thái");
-    modelKhachHang.addColumn("Địa chỉ");
-    jTable2.setModel(modelKhachHang); // Gán model mới cho jTable2
 
-    // --- Phần này của modelLichSuGiaoDich đã đúng (hoặc bạn có thể thêm lại nếu bị lỗi) ---
-    modelLichSuGiaoDich = new DefaultTableModel() {
-        @Override
-        public boolean isCellEditable(int row, int column) {
-            return false;
-        }
-    };
-    modelLichSuGiaoDich.addColumn("Mã HĐ");
-    modelLichSuGiaoDich.addColumn("Ngày Tạo");
-    modelLichSuGiaoDich.addColumn("Tổng Tiền");
-    modelLichSuGiaoDich.addColumn("Trạng Thái HĐ"); // Lưu ý: trong code trước của tôi là modelLichSuGiaoDuyich, hãy sửa lại thành modelLichSuGiaoDich nếu bạn đã copy đúng.
-    jTable3.setModel(modelLichSuGiaoDich);
-}
+    private void setupTables() {
+        // --- SỬA Ở ĐÂY CHO modelKhachHang ---
+        modelKhachHang = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Đặt tất cả các ô không thể chỉnh sửa trực tiếp trên bảng
+            }
+        };
+        modelKhachHang.addColumn("Mã KH");
+        modelKhachHang.addColumn("Tên KH");
+        modelKhachHang.addColumn("Giới tính");
+        modelKhachHang.addColumn("SĐT");
+        modelKhachHang.addColumn("Trạng thái");
+        modelKhachHang.addColumn("Địa chỉ");
+        jTable2.setModel(modelKhachHang); // Gán model mới cho jTable2
+
+        // --- Phần này của modelLichSuGiaoDich đã đúng (hoặc bạn có thể thêm lại nếu bị lỗi) ---
+        modelLichSuGiaoDich = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        modelLichSuGiaoDich.addColumn("Mã HĐ");
+        modelLichSuGiaoDich.addColumn("Ngày Tạo");
+        modelLichSuGiaoDich.addColumn("Tổng Tiền");
+        modelLichSuGiaoDich.addColumn("Trạng Thái HĐ"); // Lưu ý: trong code trước của tôi là modelLichSuGiaoDuyich, hãy sửa lại thành modelLichSuGiaoDich nếu bạn đã copy đúng.
+        jTable3.setModel(modelLichSuGiaoDich);
+    }
 
     public void fillToTable(List<KhachHang> list) {
         modelKhachHang.setRowCount(0); // Xóa dữ liệu cũ
@@ -113,45 +113,53 @@ public class QLKH extends javax.swing.JPanel {
         TF_SDT.setText(kh.getSdt());
         TA_diachi.setText(kh.getDiaChi());
         if (kh.getGioiTinh() != null) {
-            if (kh.getGioiTinh().equalsIgnoreCase("Nam")) rdonam.setSelected(true);
-            else if (kh.getGioiTinh().equalsIgnoreCase("Nữ")) rdonu.setSelected(true);
-            else buttonGroup1.clearSelection(); // Clear if gender is not Nam/Nữ
+            if (kh.getGioiTinh().equalsIgnoreCase("Nam")) {
+                rdonam.setSelected(true);
+            } else if (kh.getGioiTinh().equalsIgnoreCase("Nữ")) {
+                rdonu.setSelected(true);
+            } else {
+                buttonGroup1.clearSelection(); // Clear if gender is not Nam/Nữ
+            }
         } else {
             buttonGroup1.clearSelection();
         }
 
         if (kh.getTrangThai() != null) {
-            if (kh.getTrangThai().equalsIgnoreCase("Khách quen")) rdokhachquen.setSelected(true);
-            else if (kh.getTrangThai().equalsIgnoreCase("Khách mới")) rdokhachmoi.setSelected(true);
-            else buttonGroup2.clearSelection(); // Clear if status is not Khách quen/Khách mới
+            if (kh.getTrangThai().equalsIgnoreCase("Khách quen")) {
+                rdokhachquen.setSelected(true);
+            } else if (kh.getTrangThai().equalsIgnoreCase("Khách mới")) {
+                rdokhachmoi.setSelected(true);
+            } else {
+                buttonGroup2.clearSelection(); // Clear if status is not Khách quen/Khách mới
+            }
         } else {
             buttonGroup2.clearSelection();
         }
-        
+
         if (kh.getTrangThai() != null && kh.getTrangThai().equalsIgnoreCase("Khóa")) {
-        toggleInputFields(false); // Vô hiệu hóa tất cả các trường và nút chỉnh sửa/thêm/xóa
-        jButton17.setEnabled(false); // Nút "Khóa" bị vô hiệu hóa vì đã khóa rồi
-        jButton18.setEnabled(true);  // Nút "Mở khóa" được kích hoạt để cho phép mở khóa
+            toggleInputFields(false); // Vô hiệu hóa tất cả các trường và nút chỉnh sửa/thêm/xóa
+            jButton17.setEnabled(false); // Nút "Khóa" bị vô hiệu hóa vì đã khóa rồi
+            jButton18.setEnabled(true);  // Nút "Mở khóa" được kích hoạt để cho phép mở khóa
 
-        // Các nút tìm kiếm, làm mới, lọc vẫn hoạt động
-        BT_timkh.setEnabled(true);
-        TF_MaKH1.setEnabled(true);
-        jButton14.setEnabled(true);
-        jComboBox3.setEnabled(true);
-        jComboBox4.setEnabled(true);
+            // Các nút tìm kiếm, làm mới, lọc vẫn hoạt động
+            BT_timkh.setEnabled(true);
+            TF_MaKH1.setEnabled(true);
+            jButton14.setEnabled(true);
+            jComboBox3.setEnabled(true);
+            jComboBox4.setEnabled(true);
 
-    } else { // Nếu khách hàng KHÔNG bị Khóa
-        toggleInputFields(true);  // Kích hoạt tất cả các trường và nút chỉnh sửa/thêm/xóa
-        jButton17.setEnabled(true);  // Nút "Khóa" được kích hoạt
-        jButton18.setEnabled(false); // Nút "Mở khóa" bị vô hiệu hóa
+        } else { // Nếu khách hàng KHÔNG bị Khóa
+            toggleInputFields(true);  // Kích hoạt tất cả các trường và nút chỉnh sửa/thêm/xóa
+            jButton17.setEnabled(true);  // Nút "Khóa" được kích hoạt
+            jButton18.setEnabled(false); // Nút "Mở khóa" bị vô hiệu hóa
 
-        // Các nút tìm kiếm, làm mới, lọc vẫn hoạt động
-        BT_timkh.setEnabled(true);
-        TF_MaKH1.setEnabled(true);
-        jButton14.setEnabled(true);
-        jComboBox3.setEnabled(true);
-        jComboBox4.setEnabled(true);
-    }
+            // Các nút tìm kiếm, làm mới, lọc vẫn hoạt động
+            BT_timkh.setEnabled(true);
+            TF_MaKH1.setEnabled(true);
+            jButton14.setEnabled(true);
+            jComboBox3.setEnabled(true);
+            jComboBox4.setEnabled(true);
+        }
     }
 
     // Phương thức xóa trắng Form và bỏ chọn hàng trong bảng
@@ -164,34 +172,34 @@ public class QLKH extends javax.swing.JPanel {
         buttonGroup2.clearSelection();
         jTable2.clearSelection(); // Bỏ chọn hàng trong bảng khách hàng
         modelLichSuGiaoDich.setRowCount(0); // Xóa dữ liệu lịch sử giao dịch khi clear form
-        
-        toggleInputFields(true); // Kích hoạt lại tất cả các trường và nút chỉnh sửa/thêm/xóa
-    jButton17.setEnabled(true);  // Nút "Khóa" được kích hoạt
-    jButton18.setEnabled(false); // Nút "Mở khóa" bị vô hiệu hóa (vì không có khách hàng nào được chọn/khóa)
-    // --- Kết thúc phần thêm mới/chỉnh sửa ---
-    }
-    
-    private void toggleInputFields(boolean enable) {
-    TF_MaKH.setEnabled(enable);
-    TF_TenKH.setEnabled(enable);
-    TF_SDT.setEnabled(enable);
-    TA_diachi.setEnabled(enable); // Đảm bảo TA_diachi là tên biến của JTextArea Địa chỉ
-    rdonam.setEnabled(enable); // Đảm bảo rdonam là tên biến của JRadioButton Nam
-    rdonu.setEnabled(enable);   // Đảm bảo rdonu là tên biến của JRadioButton Nữ
-    rdokhachquen.setEnabled(enable); // Đảm bảo rdokhachquen là tên biến của JRadioButton Khách quen
-    rdokhachmoi.setEnabled(enable);  // Đảm bảo rdokhachmoi là tên biến của JRadioButton Khách mới
 
-    jButton13.setEnabled(enable); // Nút "Sửa"
-    jButton15.setEnabled(enable); // Nút "Thêm"
-    jButton16.setEnabled(enable); // Nút "Xóa"
-    // Nút "Khóa" (jButton17) và "Mở khóa" (jButton18) sẽ được xử lý riêng trong setForm
-    // Các nút tìm kiếm, làm mới, lọc sẽ luôn hoạt động
-    BT_timkh.setEnabled(true); // Nút Tìm kiếm (theo SĐT ở trên)
-    TF_MaKH1.setEnabled(true); // Trường SĐT cho tìm kiếm
-    jButton14.setEnabled(true); // Nút "Làm mới" (hoặc tên tương tự)
-    jComboBox3.setEnabled(true); // Lọc Giới tính
-    jComboBox4.setEnabled(true); // Lọc Trạng thái
-}
+        toggleInputFields(true); // Kích hoạt lại tất cả các trường và nút chỉnh sửa/thêm/xóa
+        jButton17.setEnabled(true);  // Nút "Khóa" được kích hoạt
+        jButton18.setEnabled(false); // Nút "Mở khóa" bị vô hiệu hóa (vì không có khách hàng nào được chọn/khóa)
+        // --- Kết thúc phần thêm mới/chỉnh sửa ---
+    }
+
+    private void toggleInputFields(boolean enable) {
+        TF_MaKH.setEnabled(enable);
+        TF_TenKH.setEnabled(enable);
+        TF_SDT.setEnabled(enable);
+        TA_diachi.setEnabled(enable); // Đảm bảo TA_diachi là tên biến của JTextArea Địa chỉ
+        rdonam.setEnabled(enable); // Đảm bảo rdonam là tên biến của JRadioButton Nam
+        rdonu.setEnabled(enable);   // Đảm bảo rdonu là tên biến của JRadioButton Nữ
+        rdokhachquen.setEnabled(enable); // Đảm bảo rdokhachquen là tên biến của JRadioButton Khách quen
+        rdokhachmoi.setEnabled(enable);  // Đảm bảo rdokhachmoi là tên biến của JRadioButton Khách mới
+
+        jButton13.setEnabled(enable); // Nút "Sửa"
+        jButton15.setEnabled(enable); // Nút "Thêm"
+        jButton16.setEnabled(enable); // Nút "Xóa"
+        // Nút "Khóa" (jButton17) và "Mở khóa" (jButton18) sẽ được xử lý riêng trong setForm
+        // Các nút tìm kiếm, làm mới, lọc sẽ luôn hoạt động
+        BT_timkh.setEnabled(true); // Nút Tìm kiếm (theo SĐT ở trên)
+        TF_MaKH1.setEnabled(true); // Trường SĐT cho tìm kiếm
+        jButton14.setEnabled(true); // Nút "Làm mới" (hoặc tên tương tự)
+        jComboBox3.setEnabled(true); // Lọc Giới tính
+        jComboBox4.setEnabled(true); // Lọc Trạng thái
+    }
 
     // Phương thức tải dữ liệu khách hàng từ DAO và đổ vào bảng
     private void loadKhachHangData() {
@@ -208,7 +216,7 @@ public class QLKH extends javax.swing.JPanel {
     private void filter() {
         String gt = jComboBox3.getSelectedItem().toString().trim();
         String tt = jComboBox4.getSelectedItem().toString().trim();
-        
+
         try {
             List<KhachHang> allCustomers = khDAO.getAllKhachHang(); // Lấy lại danh sách đầy đủ
             List<KhachHang> filteredList = allCustomers.stream()
@@ -256,16 +264,54 @@ public class QLKH extends javax.swing.JPanel {
             e.printStackTrace();
         }
     }
-    
+
     private int findRowBySdt(String sdt) {
-    for (int i = 0; i < modelKhachHang.getRowCount(); i++) {
-        if (sdt.equals(modelKhachHang.getValueAt(i, 3))) { // Cột 3 là SĐT, nếu cột SĐT của bạn ở vị trí khác, hãy đổi số 3
-            return i;
+        for (int i = 0; i < modelKhachHang.getRowCount(); i++) {
+            if (sdt.equals(modelKhachHang.getValueAt(i, 3))) { // Cột 3 là SĐT, nếu cột SĐT của bạn ở vị trí khác, hãy đổi số 3
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private void performStatusCheckForSelectedCustomer() {
+        int selectedRow = jTable2.getSelectedRow();
+        if (selectedRow < 0) { // Nếu không có hàng nào được chọn
+            return;
+        }
+
+        String sdt = (String) modelKhachHang.getValueAt(selectedRow, 3); // Lấy SĐT từ bảng
+        if (sdt == null || sdt.isEmpty()) {
+            return;
+        }
+
+        try {
+            KhachHang kh = khDAO.getKhachHangBySdt(sdt); // Lấy thông tin khách hàng từ DB
+            if (kh != null && kh.getTrangThai().equalsIgnoreCase("Khách mới")) {
+                int soLuongHoaDon = khDAO.getSoLuongHoaDonBySdt(sdt); // Đếm số hóa đơn của KH
+                if (soLuongHoaDon >= 5) {
+                    boolean updated = khDAO.updateTrangThaiKhachHang(sdt, "Khách quen");
+                    if (updated) {
+                        JOptionPane.showMessageDialog(this, "Khách hàng " + kh.getTenKH() + " (" + sdt + ") đã trở thành Khách quen!", "Cập nhật trạng thái", JOptionPane.INFORMATION_MESSAGE);
+                        loadKhachHangData(); // Tải lại bảng để hiển thị trạng thái mới
+                        // Chọn lại hàng và cập nhật form để hiển thị trạng thái mới ngay lập tức
+                        int newSelectedRow = findRowBySdt(sdt);
+                        if (newSelectedRow != -1) {
+                            jTable2.setRowSelectionInterval(newSelectedRow, newSelectedRow);
+                            KhachHang updatedKh = khDAO.getKhachHangBySdt(sdt);
+                            if (updatedKh != null) {
+                                setForm(updatedKh); // Cập nhật form
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Lỗi khi kiểm tra và cập nhật trạng thái khách hàng: " + e.getMessage(), "Lỗi DB", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
     }
-    return -1;
-}
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -794,7 +840,7 @@ public class QLKH extends javax.swing.JPanel {
 
     private void jButton18ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton18ActionPerformed
         // TODO add your handling code here:
-               int selectedRow = jTable2.getSelectedRow();
+        int selectedRow = jTable2.getSelectedRow();
         if (selectedRow < 0) {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn khách hàng cần mở khóa.", "Thông báo", JOptionPane.WARNING_MESSAGE);
             return;
@@ -806,7 +852,7 @@ public class QLKH extends javax.swing.JPanel {
         if (confirm == JOptionPane.YES_OPTION) {
             try {
                 // Mặc định về "Khách quen" khi mở khóa, hoặc "Khách mới" tùy theo logic nghiệp vụ của bạn
-                if (khDAO.updateTrangThaiKhachHang(sdtToUnlock, "Khách quen")) { 
+                if (khDAO.updateTrangThaiKhachHang(sdtToUnlock, "Khách quen")) {
                     JOptionPane.showMessageDialog(this, "Mở khóa khách hàng thành công!");
                     loadKhachHangData();
                     clearForm();
@@ -818,48 +864,51 @@ public class QLKH extends javax.swing.JPanel {
                 e.printStackTrace();
             }
         }
-        
-        if (confirm == JOptionPane.YES_OPTION) {
-        try {
-            // Đặt lại trạng thái mong muốn sau khi mở khóa, ví dụ "Khách quen"
-            if (khDAO.updateTrangThaiKhachHang(sdtToUnlock, "Khách quen")) {
-                JOptionPane.showMessageDialog(this, "Mở khóa khách hàng thành công!");
-                loadKhachHangData(); // Tải lại dữ liệu để cập nhật bảng
 
-                // Cập nhật lại trạng thái của form nếu khách hàng đó vẫn đang được chọn
-                int newSelectedRow = findRowBySdt(sdtToUnlock);
-                if (newSelectedRow != -1) {
-                    jTable2.setRowSelectionInterval(newSelectedRow, newSelectedRow);
-                    KhachHang khUnlocked = khDAO.getKhachHangBySdt(sdtToUnlock);
-                    if (khUnlocked != null) {
-                        setForm(khUnlocked); // Cập nhật UI theo trạng thái "Khách quen"
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                // Đặt lại trạng thái mong muốn sau khi mở khóa, ví dụ "Khách quen"
+                if (khDAO.updateTrangThaiKhachHang(sdtToUnlock, "Khách quen")) {
+                    JOptionPane.showMessageDialog(this, "Mở khóa khách hàng thành công!");
+                    loadKhachHangData(); // Tải lại dữ liệu để cập nhật bảng
+
+                    // Cập nhật lại trạng thái của form nếu khách hàng đó vẫn đang được chọn
+                    int newSelectedRow = findRowBySdt(sdtToUnlock);
+                    if (newSelectedRow != -1) {
+                        jTable2.setRowSelectionInterval(newSelectedRow, newSelectedRow);
+                        KhachHang khUnlocked = khDAO.getKhachHangBySdt(sdtToUnlock);
+                        if (khUnlocked != null) {
+                            setForm(khUnlocked); // Cập nhật UI theo trạng thái "Khách quen"
+                        }
+                    } else {
+                        clearForm();
                     }
                 } else {
-                    clearForm();
+                    JOptionPane.showMessageDialog(this, "Mở khóa khách hàng thất bại! Khách hàng không tồn tại hoặc trạng thái không thể thay đổi.", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 }
-            } else {
-                JOptionPane.showMessageDialog(this, "Mở khóa khách hàng thất bại! Khách hàng không tồn tại hoặc trạng thái không thể thay đổi.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, "Lỗi mở khóa khách hàng: " + e.getMessage(), "Lỗi DB", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Lỗi mở khóa khách hàng: " + e.getMessage(), "Lỗi DB", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
         }
-    }
     }//GEN-LAST:event_jButton18ActionPerformed
 
     private void jTable2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable2MouseClicked
         // TODO add your handling code here:
-int row = jTable2.getSelectedRow();
+        int row = jTable2.getSelectedRow();
         if (row >= 0) {
-            String sdt = (String) modelKhachHang.getValueAt(row, 3); // Lấy SDT từ cột thứ 4 (index 3)
+            String sdt = (String) modelKhachHang.getValueAt(row, 3);
             try {
-                KhachHang kh = khDAO.getKhachHangBySdt(sdt); // Lấy khách hàng từ DB bằng SDT
+                KhachHang kh = khDAO.getKhachHangBySdt(sdt);
                 if (kh != null) {
                     setForm(kh);
-                    // Khi chọn khách hàng, chuyển sang tab Lịch sử giao dịch và hiển thị
-                    // if (jTabbedPane1.getSelectedIndex() == 1) { // Nếu đã ở tab lịch sử thì load
+                    // --- Gọi phương thức kiểm tra trạng thái ở đây ---
+                    performStatusCheckForSelectedCustomer(); // Kiểm tra và cập nhật trạng thái
+                    // --- Kết thúc ---
+
+                    if (jTabbedPane1.getSelectedIndex() == 1) {
                         displayLichSuGiaoDich();
-                    // }
+                    }
                 } else {
                     JOptionPane.showMessageDialog(this, "Không tìm thấy thông tin khách hàng chi tiết.", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 }
@@ -922,7 +971,7 @@ int row = jTable2.getSelectedRow();
 
     private void jButton17ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton17ActionPerformed
         // TODO add your handling code here:
-         int selectedRow = jTable2.getSelectedRow();
+        int selectedRow = jTable2.getSelectedRow();
         if (selectedRow < 0) {
             JOptionPane.showMessageDialog(this, "Vui lòng chọn khách hàng cần khóa.", "Thông báo", JOptionPane.WARNING_MESSAGE);
             return;
@@ -946,33 +995,33 @@ int row = jTable2.getSelectedRow();
                 e.printStackTrace();
             }
         }
-        
-        if (confirm == JOptionPane.YES_OPTION) {
-        try {
-            if (khDAO.updateTrangThaiKhachHang(sdtToLock, "Khóa")) {
-                JOptionPane.showMessageDialog(this, "Khóa khách hàng thành công!");
-                loadKhachHangData(); // Tải lại dữ liệu để cập nhật bảng
 
-                // Cập nhật lại trạng thái của form nếu khách hàng đó vẫn đang được chọn
-                int newSelectedRow = findRowBySdt(sdtToLock); // Tìm hàng mới của khách hàng sau khi load lại
-                if (newSelectedRow != -1) {
-                    jTable2.setRowSelectionInterval(newSelectedRow, newSelectedRow); // Chọn lại hàng
-                    // Tự động gọi jTable2MouseClicked hoặc gọi setForm trực tiếp
-                    KhachHang khLocked = khDAO.getKhachHangBySdt(sdtToLock);
-                    if (khLocked != null) {
-                        setForm(khLocked); // Cập nhật UI theo trạng thái "Khóa"
+        if (confirm == JOptionPane.YES_OPTION) {
+            try {
+                if (khDAO.updateTrangThaiKhachHang(sdtToLock, "Khóa")) {
+                    JOptionPane.showMessageDialog(this, "Khóa khách hàng thành công!");
+                    loadKhachHangData(); // Tải lại dữ liệu để cập nhật bảng
+
+                    // Cập nhật lại trạng thái của form nếu khách hàng đó vẫn đang được chọn
+                    int newSelectedRow = findRowBySdt(sdtToLock); // Tìm hàng mới của khách hàng sau khi load lại
+                    if (newSelectedRow != -1) {
+                        jTable2.setRowSelectionInterval(newSelectedRow, newSelectedRow); // Chọn lại hàng
+                        // Tự động gọi jTable2MouseClicked hoặc gọi setForm trực tiếp
+                        KhachHang khLocked = khDAO.getKhachHangBySdt(sdtToLock);
+                        if (khLocked != null) {
+                            setForm(khLocked); // Cập nhật UI theo trạng thái "Khóa"
+                        }
+                    } else {
+                        clearForm(); // Nếu không tìm thấy, làm sạch form
                     }
                 } else {
-                    clearForm(); // Nếu không tìm thấy, làm sạch form
+                    JOptionPane.showMessageDialog(this, "Khóa khách hàng thất bại! Khách hàng không tồn tại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
                 }
-            } else {
-                JOptionPane.showMessageDialog(this, "Khóa khách hàng thất bại! Khách hàng không tồn tại.", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, "Lỗi khóa khách hàng: " + e.getMessage(), "Lỗi DB", JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Lỗi khóa khách hàng: " + e.getMessage(), "Lỗi DB", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
         }
-    }
     }//GEN-LAST:event_jButton17ActionPerformed
 
     private void jButton14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton14ActionPerformed
@@ -991,44 +1040,43 @@ int row = jTable2.getSelectedRow();
         // TODO add your handling code here:
     }//GEN-LAST:event_jTable3MouseClicked
 
-
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-     * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(QLKH.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(QLKH.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(QLKH.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(QLKH.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                // Tạo một JFrame để chứa QLKH JPanel
-                JFrame frame = new JFrame("Quản lý Khách hàng - Test");
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                frame.add(new QLKH()); // Thêm JPanel QLKH vào frame
-                frame.pack();
-                frame.setLocationRelativeTo(null);
-                frame.setVisible(true);
-            }
-        });
-    }
+//    public static void main(String args[]) {
+//        /* Set the Nimbus look and feel */
+//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+//     * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
+//         */
+//        try {
+//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+//            }
+//        } catch (ClassNotFoundException ex) {
+//            java.util.logging.Logger.getLogger(QLKH.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (InstantiationException ex) {
+//            java.util.logging.Logger.getLogger(QLKH.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (IllegalAccessException ex) {
+//            java.util.logging.Logger.getLogger(QLKH.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+//            java.util.logging.Logger.getLogger(QLKH.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        }
+//        //</editor-fold>
+//
+//        /* Create and display the form */
+//        java.awt.EventQueue.invokeLater(new Runnable() {
+//            public void run() {
+//                // Tạo một JFrame để chứa QLKH JPanel
+//                JFrame frame = new JFrame("Quản lý Khách hàng - Test");
+//                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//                frame.add(new QLKH()); // Thêm JPanel QLKH vào frame
+//                frame.pack();
+//                frame.setLocationRelativeTo(null);
+//                frame.setVisible(true);
+//            }
+//        });
+//    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
